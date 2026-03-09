@@ -6,6 +6,10 @@ frontend/node_modules
 #Environemnt Vars:
 .env
 .env.*
+#Backend:
+backend/.env
+#Frontend:
+frontend/.env
 
 #Builds:
 dist
