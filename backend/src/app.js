@@ -1,9 +1,11 @@
 //express setup
 import express from "express";
-//eventually this is where i will setup routes
+//--routes--
+import projectRoutes from "./routes/projectRoutes.js";
 
-const ap = express();
+const app = express();
 
-ap.use(express.json());
+app.use(express.json());
+app.use("/projects", projectRoutes);
 
 export default app; 

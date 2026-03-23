@@ -1,4 +1,4 @@
-import { prisma } from "../connections.js"
+//import { prisma } from "../connections.js"
 
 export async function create(project){
     return prisma.project.create({
