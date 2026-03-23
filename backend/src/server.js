@@ -1,10 +1,6 @@
-import express from "express"
+import app from "./app.js";
 
-const app = express()
-
-app.get("/", (req, res) => {
-  res.send("Quick Setup")
-})
+const PORT = process.env.PORT || 3000;
 
 app.listen(3000, () => {
   console.log("Forge is running: http://localhost:3000")
