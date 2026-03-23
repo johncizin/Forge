@@ -1,14 +1,118 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
+// prisma myql schema 
+//wip can always add as i go for nice to haves : file attachment FK isnt setup right
 generator client {
-  provider = "prisma-client"
-  output   = "../src/generated/prisma"
+  provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "mysql"
+}
+
+/*
+
+-----Table-------
+FIELDS
+_________________________
+RELATIONS
+*/
+
+model User {
+  id            String   @id @default(uuid())
+  email         String   @unique
+  passwordHash  String
+  createdAt     DateTime @default(now())
+
+  ownedProjects Project[]    @relation("OwnerProjects") //might not need this
+  memberships   Membership[] //related to project membership
+  favorites     Favorite[] //related to favorites yes
+  comments      Comment[] //related to comments user has comments
+  attachments   Attachment[] //related to attachments user has uploaded
+}
+
+model Project {
+  id        String   @id @default(uuid())
+  name      String
+  ownerId   String
+  createdAt DateTime @default(now())
+
+  owner       User           @relation("OwnerProjects", fields: [ownerId], references: [id])
+  memberships Membership[] //has members
+  invites     PendingInvite[] //has pending invites :: This is confusing but its so i can show it in the project page 
+  tasks       Task[] // has tasks 
+  //removed favorites
+
+}
+
+model Task {
+  id          String   @id @default(uuid())
+  title       String
+  description String
+  projectId   String
+  createdAt   DateTime @default(now())
+
+  project Project @relation(fields: [projectId], references: [id]) // is in a / belongs to a porject
+  comments Comment[] //has comments
+  attachments Attachment[] // has attachments
+}
+
+model Membership {
+  id        String   @id @default(uuid())
+  userId    String
+  projectId String
+  role      String   // "admin", "member"
+  createdAt DateTime @default(now())
+
+  user    User    @relation(fields: [userId], references: [id])
+  project Project @relation(fields: [projectId], references: [id])
+
+  @@unique([userId, projectId])
+}
+
+//TODO: this needs to be reworked
+model PendingInvite {
+  id        String   @id @default(uuid())
+  email     String //will have this because user has to enter email to send inv
+  projectId String //to what project
+  role      String //might not be necessary can be defaulted to member, but adds possible flxibility
+  token     String   @unique // unique token for accepting invite
+  status    String   @default("pending") // "pending", "accepted", "declined"
+  createdAt DateTime @default(now()) //so we can compare and expire
+  expiresAt DateTime //might be unecessary because it can just be a standard say 1 month and just check at time of "accept". 
+
+  project Project @relation(fields: [projectId], references: [id]) 
+
+  @@index([email])
+}
+
+model Favorite {
+  id        String   @id @default(uuid())
+  userId    String
+  projectId String
+  createdAt DateTime @default(now())
+
+  user    User    @relation(fields: [userId], references: [id])
+
+  @@unique([userId, projectId])
+}
+model Comment {
+  id        String   @id @default(uuid())
+  content   String 
+  taskId    String 
+  userId    String 
+  createdAt DateTime @default(now())
+
+  task Task @relation(fields: [taskId], references: [id]) // belongs to a task
+  user User @relation(fields: [userId], references: [id])  // belongs to a user
+}
+
+model Attachment {
+  id        String   @id @default(uuid())
+  fileName  String
+  fileUrl   String   // file lives
+  taskId    String
+  uploadedBy String
+  createdAt DateTime @default(now())
+  //TODO: add in task and user table 
+  task Task @relation(fields: [taskId], references: [id]) // belongs to a task
+  user User @relation(fields: [uploadedBy], references: [id]) // belongs to a user
 }
