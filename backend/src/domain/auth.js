@@ -1,6 +1,6 @@
 import bcrypt from 'bcrypt';
 
-export async function hashPassword({password }) {
+export async function hashPassword({ password }) {
     return bcrypt.hash(password, 10);
 }
 

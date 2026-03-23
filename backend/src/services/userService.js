@@ -7,11 +7,12 @@ export class UserService {
         this.authDomain = authDomain;
     }
     
-    //@ PARAMS: userData { name, email, password }
+    //@ PARAMS: userData {email, password } 
+    //probably will add name
     async register({email, password}) {
         // Validate user data
-        const hashedPassword = this.authDomain.hashPassword({email, password});
-        const user = { email, password: hashedPassword };
+        const hashedPassword = await this.authDomain.hashPassword({password});
+        const user = { email, passwordHash: hashedPassword };
         // Save user to the database
         await this.userRepo.create(user);
         return user;

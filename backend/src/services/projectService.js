@@ -19,9 +19,8 @@ export class ProjectService {
     */ 
     async createProject(data, user) {
         const project = this.projectDomain.createProject({...data, ownerId: user.id}); //have to add auth for the user.id to work
-
-        await this.projectRepo.create(project);
-        return project;
+        const created = await this.projectRepo.create(project);
+        return created;
     }
 
     //user specific
