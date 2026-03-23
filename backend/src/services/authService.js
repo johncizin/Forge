@@ -12,7 +12,7 @@ export class AuthService {
             throw new Error('Invalid Credentials');
         }
         
-        const isValid = this.authDomain.verifyPassword(password, user.passwordHash);
+        const isValid = await this.authDomain.verifyPassword(password, user.passwordHash);
         if (!isValid) {
             throw new Error('Invalid Credentials');
         }

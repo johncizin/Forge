@@ -11,7 +11,9 @@ export class UserService {
     //probably will add name
     async register({email, password}) {
         // Validate user data
-        const hashedPassword = await this.authDomain.hashPassword({password});
+        const existing = await this.userRepo.getByEmail(email);
+        if (existing) throw new Error("Email in Use Already! Sign in!")
+        const hashedPassword = await this.userRepo.hashPassword({password});
         const user = { email, passwordHash: hashedPassword };
         // Save user to the database
         await this.userRepo.create(user);

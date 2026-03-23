@@ -59,3 +59,21 @@ Request -> Route -> Service -> Repo -> Prisma -> DB -> Response
             - Service to domain to enforce data rules and then returned back to Service
                 - then from there back to Repos to Prisma to migration to DB
 
+# CURL Examples: 
+## Already Registered: 
+ curl -X POST http://localhost:3000/auth/register \
+  -H "Content-Type: application/json" \
+  -d '{"email": "test@test.com", "password": "1234"}'
+
+## Login:
+ curl -X POST http://localhost:3000/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{"email": "test@test.com", "password": "1234"}'
+
+### Expected Output:
+Error: Email in Use Already! Sign in!
+
+## New: 
+curl -X POST http://localhost:3000/auth/register \
+  -H "Content-Type: application/json" \
+  -d '{"email": "test1@test.com", "password": "1234"}'
