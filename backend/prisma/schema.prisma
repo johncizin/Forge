@@ -1,91 +1,76 @@
-// prisma myql schema 
-//wip can always add as i go for nice to haves : file attachment FK isnt setup right
-//this whole thing probable needs to be **refactored**
-//Initial schema setup 3/20/26
-//updated: 3/22, 3/23 
 generator client {
   provider = "prisma-client-js"
+  output = "../generated/prisma"
 }
 
 datasource db {
   provider = "mysql"
 }
 
-/*
-
------Table-------
-FIELDS
-_________________________
-RELATIONS
-*/
-
 model User {
-  id            String   @id @default(uuid())
-  email         String   @unique
+  id            String       @id @default(uuid())
+  email         String       @unique
   passwordHash  String
-  createdAt     DateTime @default(now())
-
-  ownedProjects Project[]    @relation("OwnerProjects") //might not need this
-  memberships   Membership[] //related to project membership
-  favorites     Favorite[] //related to favorites yes
-  comments      Comment[] //related to comments user has comments
-  attachments   Attachment[] //related to attachments user has uploaded
+  createdAt     DateTime     @default(now())
+  attachments   Attachment[]
+  comments      Comment[]
+  favorites     Favorite[]
+  memberships   Membership[]
+  ownedProjects Project[]    @relation("OwnerProjects")
 }
 
 model Project {
-  id        String   @id @default(uuid())
-  name      String
-  desciription String //added 3/23/26
-  ownerId   String
-  createdAt DateTime @default(now())
+  id          String          @id @default(uuid())
+  name        String
+  ownerId     String
+  createdAt   DateTime        @default(now())
+  memberships Membership[]
+  invites     PendingInvite[]
+  owner       User            @relation("OwnerProjects", fields: [ownerId], references: [id])
+  tasks       Task[]
 
-  owner       User           @relation("OwnerProjects", fields: [ownerId], references: [id])
-  memberships Membership[] //has members
-  invites     PendingInvite[] //has pending invites :: This is confusing but its so i can show it in the project page 
-  tasks       Task[] // has tasks 
-  //removed favorites
-
+  @@index([ownerId], map: "Project_ownerId_fkey")
 }
 
 model Task {
-  id          String   @id @default(uuid())
+  id          String       @id @default(uuid())
   title       String
   description String
   projectId   String
-  createdAt   DateTime @default(now())
+  createdAt   DateTime     @default(now())
+  attachments Attachment[]
+  comments    Comment[]
+  project     Project      @relation(fields: [projectId], references: [id])
 
-  project Project @relation(fields: [projectId], references: [id]) // is in a / belongs to a porject
-  comments Comment[] //has comments
-  attachments Attachment[] // has attachments
+  @@index([projectId], map: "Task_projectId_fkey")
 }
 
 model Membership {
   id        String   @id @default(uuid())
   userId    String
   projectId String
-  role      String   // "admin", "member"
+  role      String
   createdAt DateTime @default(now())
-
-  user    User    @relation(fields: [userId], references: [id])
-  project Project @relation(fields: [projectId], references: [id])
+  project   Project  @relation(fields: [projectId], references: [id])
+  user      User     @relation(fields: [userId], references: [id])
 
   @@unique([userId, projectId])
+  @@index([projectId], map: "Membership_projectId_fkey")
 }
 
-//TODO: this needs to be reworked
 model PendingInvite {
   id        String   @id @default(uuid())
-  email     String //will have this because user has to enter email to send inv
-  projectId String //to what project
-  role      String //might not be necessary can be defaulted to member, but adds possible flxibility
-  token     String   @unique // unique token for accepting invite
-  status    String   @default("pending") // "pending", "accepted", "declined"
-  createdAt DateTime @default(now()) //so we can compare and expire
-  expiresAt DateTime //might be unecessary because it can just be a standard say 1 month and just check at time of "accept". 
-
-  project Project @relation(fields: [projectId], references: [id]) 
+  email     String
+  projectId String
+  role      String
+  token     String   @unique
+  status    String   @default("pending")
+  createdAt DateTime @default(now())
+  expiresAt DateTime
+  project   Project  @relation(fields: [projectId], references: [id])
 
   @@index([email])
+  @@index([projectId], map: "PendingInvite_projectId_fkey")
 }
 
 model Favorite {
@@ -93,30 +78,34 @@ model Favorite {
   userId    String
   projectId String
   createdAt DateTime @default(now())
-
-  user    User    @relation(fields: [userId], references: [id])
+  user      User     @relation(fields: [userId], references: [id])
 
   @@unique([userId, projectId])
 }
+
 model Comment {
   id        String   @id @default(uuid())
-  content   String 
-  taskId    String 
-  userId    String 
+  content   String
+  taskId    String
+  userId    String
   createdAt DateTime @default(now())
+  task      Task     @relation(fields: [taskId], references: [id])
+  user      User     @relation(fields: [userId], references: [id])
 
-  task Task @relation(fields: [taskId], references: [id]) // belongs to a task
-  user User @relation(fields: [userId], references: [id])  // belongs to a user
+  @@index([taskId], map: "Comment_taskId_fkey")
+  @@index([userId], map: "Comment_userId_fkey")
 }
 
 model Attachment {
-  id        String   @id @default(uuid())
-  fileName  String
-  fileUrl   String   // file lives
-  taskId    String
+  id         String   @id @default(uuid())
+  fileName   String
+  fileUrl    String
+  taskId     String
   uploadedBy String
-  createdAt DateTime @default(now())
-  //TODO: add in task and user table 
-  task Task @relation(fields: [taskId], references: [id]) // belongs to a task
-  user User @relation(fields: [uploadedBy], references: [id]) // belongs to a user
+  createdAt  DateTime @default(now())
+  task       Task     @relation(fields: [taskId], references: [id])
+  user       User     @relation(fields: [uploadedBy], references: [id])
+
+  @@index([taskId], map: "Attachment_taskId_fkey")
+  @@index([uploadedBy], map: "Attachment_uploadedBy_fkey")
 }

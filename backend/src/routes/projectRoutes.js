@@ -2,13 +2,14 @@
 import express from "express";
 import {projectService} from "../container.js"
 //auth coming with middleware
+import { requireAuth } from "../middleware/requireAuth.js";
 
 const router = express.Router();
 
 //TODO: Left off here this and projectService
 
 //root creates project
-router.post("/", async (req, res) => {
+router.post("/", requireAuth, async (req, res) => {
     console.log(req.body) //testing curl here 3/23/26
     /* 
     @PARAMS: name, description, ownerID

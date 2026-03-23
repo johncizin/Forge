@@ -20,7 +20,7 @@ export class ProjectService {
     async createProject(data, user) {
         const project = this.projectDomain.createProject({...data, ownerId: user.id}); //have to add auth for the user.id to work
 
-        await this.projectRepo.saveProject(project);
+        await this.projectRepo.create(project);
         return project;
     }
 

@@ -19,6 +19,9 @@ build
 *.db
 *db.journal
 prisma/dev.db
+backend/generated/prisma
+backend/prisma/migrations
+backend/generated/*
 
 #Mac nonsense:
 .DS_Store
