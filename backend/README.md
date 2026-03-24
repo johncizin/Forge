@@ -18,9 +18,8 @@ Request -> Route -> Service -> Repo -> Prisma -> DB -> Response
 - Returns responses 
 
 ### Services:
-- Business Logic 
 - Orchestrator
-    - repos and domains are called here
+    - repos and domains coordinated here
 
 ### Domain:
 - Rules + Validation
@@ -77,3 +76,5 @@ Error: Email in Use Already! Sign in!
 curl -X POST http://localhost:3000/auth/register \
   -H "Content-Type: application/json" \
   -d '{"email": "test1@test.com", "password": "1234"}'
+
+## Login: 

@@ -9,6 +9,7 @@ datasource db {
 
 model User {
   id            String       @id @default(uuid())
+  name          String
   email         String       @unique
   passwordHash  String
   createdAt     DateTime     @default(now())
@@ -22,6 +23,7 @@ model User {
 model Project {
   id          String          @id @default(uuid())
   name        String
+  description String
   ownerId     String
   createdAt   DateTime        @default(now())
   memberships Membership[]
@@ -66,7 +68,7 @@ model PendingInvite {
   token     String   @unique
   status    String   @default("pending")
   createdAt DateTime @default(now())
-  expiresAt DateTime
+  expiresAt DateTime @default(dbgenerated("DATE_ADD(NOW(), INTERVAL 7 DAY)"))
   project   Project  @relation(fields: [projectId], references: [id])
 
   @@index([email])

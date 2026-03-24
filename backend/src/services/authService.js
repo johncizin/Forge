@@ -18,7 +18,7 @@ export class AuthService {
         }
 
         const token = jwt.sign({ userId: user.id}, "secret", { expiresIn: '1h' }); //testing "secret" REPLACE
-
+        
         return {user, token};
     }
 }
