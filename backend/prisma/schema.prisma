@@ -7,6 +7,24 @@ datasource db {
   provider = "mysql"
 }
 
+enum Role {
+  OWNER
+  MEMBER
+}
+
+enum InviteStatus {
+  PENDING
+  ACCEPTED
+  DECLINED
+  EXPIRED
+}
+
+enum TaskStatus {
+  TODO
+  IN_PROGRESS
+  COMPLETED
+}
+
 model User {
   id            String       @id @default(uuid())
   name          String
@@ -17,6 +35,7 @@ model User {
   comments      Comment[]
   favorites     Favorite[]
   memberships   Membership[]
+  assignedTasks Task[] @relation("AssignedTasks")
   ownedProjects Project[]    @relation("OwnerProjects")
 }
 
@@ -25,11 +44,13 @@ model Project {
   name        String
   description String
   ownerId     String
+  //cardPhoto   String?         @default() // Placeholder for future card photo URL
   createdAt   DateTime        @default(now())
   memberships Membership[]
   invites     PendingInvite[]
   owner       User            @relation("OwnerProjects", fields: [ownerId], references: [id])
   tasks       Task[]
+  favorites   Favorite[]
 
   @@index([ownerId], map: "Project_ownerId_fkey")
 }
@@ -37,6 +58,9 @@ model Project {
 model Task {
   id          String       @id @default(uuid())
   title       String
+  assigneeId  String?
+  assignee    User?    @relation("AssignedTasks", fields: [assigneeId], references: [id])
+  status      TaskStatus   @default(TODO)
   description String
   projectId   String
   createdAt   DateTime     @default(now())
@@ -45,13 +69,15 @@ model Task {
   project     Project      @relation(fields: [projectId], references: [id])
 
   @@index([projectId], map: "Task_projectId_fkey")
+  @@index([assigneeId], map: "Task_assigneeId_fkey")
+
 }
 
 model Membership {
   id        String   @id @default(uuid())
   userId    String
   projectId String
-  role      String
+  role      Role
   createdAt DateTime @default(now())
   project   Project  @relation(fields: [projectId], references: [id])
   user      User     @relation(fields: [userId], references: [id])
@@ -64,9 +90,9 @@ model PendingInvite {
   id        String   @id @default(uuid())
   email     String
   projectId String
-  role      String
+  role      Role @default(MEMBER)
   token     String   @unique
-  status    String   @default("pending")
+  status    InviteStatus @default(PENDING)
   createdAt DateTime @default(now())
   expiresAt DateTime @default(dbgenerated("DATE_ADD(NOW(), INTERVAL 7 DAY)"))
   project   Project  @relation(fields: [projectId], references: [id])
@@ -79,10 +105,12 @@ model Favorite {
   id        String   @id @default(uuid())
   userId    String
   projectId String
+  project   Project  @relation(fields: [projectId], references: [id])
   createdAt DateTime @default(now())
   user      User     @relation(fields: [userId], references: [id])
 
   @@unique([userId, projectId])
+  @@index([projectId], map: "Favorite_projectId_fkey")
 }
 
 model Comment {
