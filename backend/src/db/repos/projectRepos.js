@@ -1,8 +1,8 @@
-import { prisma } from "../connection.js"
+import { prisma } from "../connection.js";
 
 export async function create(project){
     return prisma.project.create({
-        data: project 
+        data: project
     })
 }
  

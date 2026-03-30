@@ -17,8 +17,10 @@ export class AuthService {
             throw new Error('Invalid Credentials');
         }
 
-        const token = jwt.sign({ userId: user.id}, "secret", { expiresIn: '1h' }); //testing "secret" REPLACE
+        const { passwordHash, ...safeUser } = user;
+        const token = jwt.sign({ userId: user.id}, process.env.JWT_SECRET, { expiresIn: '1h' }); //testing "secret" REPLACE
+
         
-        return {user, token};
+        return { user: safeUser, token };
     }
 }

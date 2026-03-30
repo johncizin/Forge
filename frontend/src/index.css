@@ -1,1 +1,13 @@
 @import "tailwindcss";
+
+@theme {
+  --color-forge-bg: #FFFFFF;
+  --color-forge-sidebar: #FFFFFF;
+  --color-forge-border: #21262d;
+  --color-forge-hover: #2d333b;
+  --color-forge-accent: #000000;
+  --color-forge-muted: #8b949e;
+  --color-forge-login-text: #000000;
+  --color-forge-login-focus-border: #0000FF;
+  --color-forge-login-hover: #D3D3D3;
+}

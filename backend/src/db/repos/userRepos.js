@@ -2,7 +2,11 @@ import {prisma}  from "../connection.js"
 
 export async function create(user){
     return prisma.user.create({
-        data: user 
+        data: {
+            name: user.name,
+            email: user.email,
+            passwordHash: user.passwordHash
+        }
     })
 }
 

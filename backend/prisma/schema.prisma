@@ -27,7 +27,7 @@ enum TaskStatus {
 
 model User {
   id            String       @id @default(uuid())
-  name          String
+  name          String?
   email         String       @unique
   passwordHash  String
   createdAt     DateTime     @default(now())
@@ -94,7 +94,7 @@ model PendingInvite {
   token     String   @unique
   status    InviteStatus @default(PENDING)
   createdAt DateTime @default(now())
-  expiresAt DateTime @default(dbgenerated("DATE_ADD(NOW(), INTERVAL 7 DAY)"))
+  expiresAt DateTime
   project   Project  @relation(fields: [projectId], references: [id])
 
   @@index([email])
