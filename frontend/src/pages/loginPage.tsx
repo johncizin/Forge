@@ -92,7 +92,7 @@ export default function LoginPage() {
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                placeholder="••••••••"
+                placeholder="*******"
                 required
                 className="bg-forge-bg border hover:bg-forge-login-hover border-forge-border rounded-lg px-3 py-2 text-sm text-forge-login-text placeholder-forge-muted/50 focus:outline-none focus:border-forge-login-focus-border transition-colors"
               />
