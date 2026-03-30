@@ -13,10 +13,12 @@ import {
 } from "lucide-react";
 import NavItem from "./NavItem";
 
+//this is only needed for text check/ cast?
 interface SidebarProps {
-  collapsed: boolean;
-  setCollapsed: (val: boolean) => void;
+  collapsed: boolean; 
+  setCollapsed: (val: boolean) => void; // state setter 
 }
+
 
 export default function Sidebar({ collapsed, setCollapsed }: SidebarProps) {
   return (

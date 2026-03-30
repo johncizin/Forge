@@ -13,7 +13,7 @@ function Layout() {
   return (
     <ProtectedRoute>
       <div className="flex h-screen bg-forge-bg overflow-hidden">
-        <Sidebar collapsed={collapsed} setCollapsed={setCollapsed} /> {/* for sidebar-collapsed by default*/}
+        <Sidebar collapsed={collapsed} setCollapsed={setCollapsed} /> {/* for sidebar-collapsed by default initializes state setter and bool ** remember struct in interface*/}
         <main className="flex-1 overflow-auto p-8">
           <Routes>
             <Route path="/" element={<Navigate to="/dashboard" replace />} />
