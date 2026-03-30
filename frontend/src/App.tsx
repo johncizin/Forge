@@ -36,8 +36,8 @@ export default function App() {
     <AuthProvider>
       <BrowserRouter>
         <Routes>
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/*" element={<Layout />} />
+          <Route path="/login" element={<LoginPage />} /> {/* login page route everything is a function */}
+          <Route path="/*" element={<Layout />} /> {/* routes to layout pages */}
         </Routes>
       </BrowserRouter>
     </AuthProvider>

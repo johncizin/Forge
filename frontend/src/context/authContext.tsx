@@ -19,16 +19,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [token, setToken] = useState<string | null>(null);
 
-  // Load token from localStorage on mount
+  // local storage: from web
+  //use effect runs every render i think?
   useEffect(() => {
-    const storedToken = localStorage.getItem("forge_token");
-    const storedUser = localStorage.getItem("forge_user");
+    const storedToken = localStorage.getItem("forge_token"); //where its saved at
+    const storedUser = localStorage.getItem("forge_user"); //same ^
     if (storedToken && storedUser) {
       setToken(storedToken);
       setUser(JSON.parse(storedUser));
     }
   }, []);
 
+  //fetching basically my curl but in ts
   const login = async (email: string, password: string) => {
     const res = await fetch("http://localhost:3000/auth/login", {
       method: "POST",

@@ -3,7 +3,9 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/authContext";
 import { Anvil } from "lucide-react";
 
+
 export default function LoginPage() {
+  //
   const [mode, setMode] = useState<"login" | "register">("login");
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -38,7 +40,7 @@ export default function LoginPage() {
     <div className="min-h-screen bg-forge-bg flex items-center justify-center">
       <div className="w-full max-w-sm">
         {/* Logo */}
-        <div className="flex items-center justify-center gap-3 mb-8">
+        <div className="flex items-center justify-center mb-8 gap-3">
           <div className="w-9 h-9 rounded-lg bg-forge-accent flex items-center justify-center">
             <Anvil size={20} color="white" />
           </div>
