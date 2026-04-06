@@ -22,20 +22,6 @@ const testProject: Project = {
   createdAt: new Date().toISOString()
 };
 
-async function createProject(project: Project) {
-    const res = await fetch("http://localhost:3000/projects", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify(project)
-    });
-    if (!res.ok) {
-        throw new Error("Failed to create project");
-    }
-    return res.json();
-}
-
 export function Dashboard() {
   const { token } = useAuth();
   const navigate = useNavigate();
@@ -43,36 +29,42 @@ export function Dashboard() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  useEffect(() => {
-    const fetchProjects = async () => {
-      try {
-        const res = await fetch("http://localhost:3000/projects/my-projects", {
-          headers: { Authorization: `Bearer ${token}` },
+  //test project
+    async function createProject(project: Project, token: string) {
+    const res = await fetch("http://localhost:3000/projects", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`
+            },
+            body: JSON.stringify({ name: project.name, description: project.description }),
         });
-        if (!res.ok) throw new Error("Failed to fetch projects");
-        const data = await res.json();
-        setProjects(data);
-      } catch (err: any) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
-      }
+        if (!res.ok) throw new Error("Failed to create project");
+        return res.json();
+    }
+    //fetch projects after i call the create test projects 
+    const fetchProjects = async () => {
+        try {
+            const res = await fetch("http://localhost:3000/projects/my-projects", {
+                headers: { Authorization: `Bearer ${token}` },
+            });
+            if (!res.ok) throw new Error("Failed to fetch projects");
+            const data = await res.json();
+            setProjects(data);
+        } catch (err: any) {
+            setError(err.message);
+        } finally {
+            setLoading(false);
+        }
     };
 
-    if (token) fetchProjects();
-  }, [token]);
+    useEffect(() => {
+        if (token) fetchProjects();
+    }, [token]);
 
-  if (loading) return (
-    <div className="flex items-center justify-center h-full text-forge-muted">
-      <p>Loading...</p>
-    </div>
-  );
-
-  if (error) return (
-    <div className="flex items-center justify-center h-full text-red-400">
-      <p>{error}</p>
-    </div>
-  );
+    //fetching depends on which loads/doesn't load first or error
+    if (loading) return <div className="flex items-center justify-center h-full text-forge-muted"><p>Loading...</p></div>;
+    if (error) return <div className="flex items-center justify-center h-full text-red-400"><p>{error}</p></div>;
 
   return (
     <div className="p-8">
@@ -84,8 +76,12 @@ export function Dashboard() {
             {projects.length} {projects.length === 1 ? "project" : "projects"} 
           </p>
         </div>
+         {/* project button TODO: functionality */}
         <button
-          onClick={() => navigate("/projects/new")}
+          onClick={async () => {
+            await createProject(testProject, token!);
+            await fetchProjects();
+          }}
           className="flex items-center gap-2 bg-forge-accent text-white text-sm font-medium px-4 py-2 rounded-lg hover:opacity-80 transition-opacity"
         >
           <Plus size={16} />
@@ -101,13 +97,13 @@ export function Dashboard() {
           <p className="text-sm mt-1">Create one to get started</p>
         </div>
       ) : (
-        /* Project grid */
+        /* Card grid */
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {projects.map((project) => (
             <div
               key={project.id}
-              onClick={async () => {
-                await createProject(testProject); //not working rn
+              onClick={async () => { 
+                navigate(`/projects/${project.id}`) //not working rn but soon: would nag to: forge/projects/123456
               }}
               className="border border-forge-border rounded-2xl p-5 cursor-pointer hover:bg-forge-login-hover transition-colors"
             >
