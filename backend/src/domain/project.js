@@ -4,16 +4,15 @@ Rules for the project
 
 //TODO: Pretty errors
 
-export function createProject({ name, description, ownerId }) {
-    if (!name || !description || !ownerId) {
+export function createProject({ name, description}, user) {
+    if (!name || !description || !user.id) {
         throw new Error("Missing required fields");
     }
     
     return {
         name,
-        ownerId,
+        ownerId: user.id,
         description,
-        ownerId: ownerId
     } //everything else handled by PRISMA (id, createdAt)
 }
 

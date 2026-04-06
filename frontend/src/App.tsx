@@ -4,7 +4,8 @@ import Sidebar from "./components/Sidebar";
 import FAB from "./components/FAB";
 import ProtectedRoute from "./components/ProtectedRoute";
 import LoginPage from "./pages/loginPage";
-import { Dashboard, Projects, Tasks, Report, Favorites, Settings } from "./pages";
+import {Projects, Tasks, Report, Favorites, Settings } from "./pages";
+import { Dashboard } from "./components/Dashboard";
 import { AuthProvider } from "./context/authContext";
 
 function Layout() {

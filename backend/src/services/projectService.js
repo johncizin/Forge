@@ -21,18 +21,21 @@ export class ProjectService {
         console.log("Creating project with data:", data, "for user:", user); // print debug
         const project = this.projectDomain.createProject({...data}, user); //have to add auth for the user.id to work //added 4/6/26
         const created = await this.projectRepo.create(project);
+
         return created;
     }
 
     //user specific
     // PARAMS: user: { id, name, ... }
     async getMyProjects(user) {
-        return await this.projectRepo.getById(user.id);
+        return await this.projectRepo.getByOwnerId(user.id);
     }
 
     async getProjectById(projectId, user) {
         const project = await this.projectRepo.getById(projectId);
-        if (project.ownerId !== user.id) {
+        if (!project) throw new Error("Not found");
+
+        if (!this.projectDomain.canViewProject(project, user)) {
             throw new Error("Unauthorized");
         }
         return project;
@@ -40,7 +43,9 @@ export class ProjectService {
 
     async deleteProject(projectId, user) {
         const project = await this.projectRepo.getById(projectId);
-        if (project.ownerId !== user.id) {
+        if (!project)  throw new Error("Not found");
+    
+        if (!this.projectDomain.canDeleteProject(project, user)) {
             throw new Error("Unauthorized");
         }
         return await this.projectRepo.delete(projectId);
@@ -48,7 +53,9 @@ export class ProjectService {
 
     async updateProject(projectId, data, user) {
         const project = await this.projectRepo.getById(projectId);
-        if (project.ownerId !== user.id) {
+        if (!project)  throw new Error("Not found");
+
+        if (!this.projectDomain.canEditProject(project, user)) {
             throw new Error("Unauthorized");
         }
         const updatedProject = this.projectDomain.updateProject(project, data);
