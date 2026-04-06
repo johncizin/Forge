@@ -11,3 +11,16 @@ export async function getById(id){
         where: {id}
     })
 }
+
+export async function update(project){
+    return prisma.project.update({
+        where: {id: project.id},
+        data: project
+    })
+}
+
+export async function deleteProject(id){
+    return prisma.project.delete({
+        where: {id}
+    })
+}

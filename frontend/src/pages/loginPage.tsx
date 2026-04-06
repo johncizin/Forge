@@ -42,9 +42,8 @@ export default function LoginPage() {
         {/* Logo */}
         <div className="flex items-center justify-center mb-8 gap-3">
           <div className="w-9 h-9 rounded-lg bg-forge-accent flex items-center justify-center">
-            <Anvil size={20} color="white" />
+            <Anvil size={18} color="white" className = "block shrink-0" />
           </div>
-          <span className="text-white font-bold text-2xl tracking-tight">Forge</span>
         </div>
 
         {/* Card Body */}

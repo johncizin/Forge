@@ -18,7 +18,8 @@ export class ProjectService {
             user: { id, name, ... } // from auth context
     */ 
     async createProject(data, user) {
-        const project = this.projectDomain.createProject({...data, ownerId: user.id}); //have to add auth for the user.id to work
+        console.log("Creating project with data:", data, "for user:", user); // print debug
+        const project = this.projectDomain.createProject({...data}, user); //have to add auth for the user.id to work //added 4/6/26
         const created = await this.projectRepo.create(project);
         return created;
     }
@@ -28,4 +29,29 @@ export class ProjectService {
     async getMyProjects(user) {
         return await this.projectRepo.getById(user.id);
     }
+
+    async getProjectById(projectId, user) {
+        const project = await this.projectRepo.getById(projectId);
+        if (project.ownerId !== user.id) {
+            throw new Error("Unauthorized");
+        }
+        return project;
+    }
+
+    async deleteProject(projectId, user) {
+        const project = await this.projectRepo.getById(projectId);
+        if (project.ownerId !== user.id) {
+            throw new Error("Unauthorized");
+        }
+        return await this.projectRepo.delete(projectId);
+    }
+
+    async updateProject(projectId, data, user) {
+        const project = await this.projectRepo.getById(projectId);
+        if (project.ownerId !== user.id) {
+            throw new Error("Unauthorized");
+        }
+        const updatedProject = this.projectDomain.updateProject(project, data);
+        return await this.projectRepo.update(updatedProject);
+    }    
 }
