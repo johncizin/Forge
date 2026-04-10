@@ -18,6 +18,7 @@ authenticate user then authorize with domain rules
 router.post("/", requireAuth, async (req, res) => {
     try{
         const project = await projectService.createProject(req.body, req.user);
+        console.log("backed to router after create"); // print debug
         res.json(project);
     } catch (err) {
         res.status(400).json({ error: err.message }); //better erroring soon
@@ -35,27 +36,27 @@ router.get("/my-projects", requireAuth, async (req, res) => {
 })
 
 //for displaying project
-router.get("/:id", requireAuth, async (req, res) => {
+router.get("/:shortId", requireAuth, async (req, res) => {
     try {
-        const project = await projectService.getProjectById(req.params.id, req.user);
+        const project = await projectService.getProjectById(req.params.shortId, req.user);
         res.json(project);
     } catch (err) {
          res.status(500).json({ error: "Internal server error" });
     }
 })
 
-router.delete("/:id", requireAuth, async (req, res) => {
+router.delete("/:shortId", requireAuth, async (req, res) => {
     try {
-        await projectService.deleteProject(req.params.id, req.user);
+        await projectService.deleteProject(req.params.shortId, req.user);
         res.json({ success: true });
     } catch (err) {
         res.status(403).json({ error: err.message });
     }
 })
 
-router.put("/:id", requireAuth, async (req, res) => {
+router.put("/:shortId", requireAuth, async (req, res) => {
     try {
-        const updated = await projectService.updateProject(req.params.id, req.body, req.user);
+        const updated = await projectService.updateProject(req.params.shortId, req.body, req.user);
         res.json(updated);
     }
     catch (err) {
@@ -66,7 +67,3 @@ router.put("/:id", requireAuth, async (req, res) => {
 
 
 export default router;
-
-//more stubs to come just want the basics here for now
-
-//router.get("/:id") 

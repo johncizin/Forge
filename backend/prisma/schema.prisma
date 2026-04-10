@@ -41,11 +41,14 @@ model User {
 
 model Project {
   id          String          @id @default(uuid())
+  shortId     String          @unique //clean url didnt realize it would be the 32 char uuid
   name        String
   description String
   ownerId     String
   //cardPhoto   String?         @default() // Placeholder for future card photo URL
-  createdAt   DateTime        @default(now())
+  createdAt   DateTime        @default(now()) 
+
+  //relations
   memberships Membership[]
   invites     PendingInvite[]
   owner       User            @relation("OwnerProjects", fields: [ownerId], references: [id])

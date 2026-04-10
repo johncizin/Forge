@@ -7,6 +7,7 @@ import { Plus, FolderKanban } from "lucide-react";
 //from backend / db 
 interface Project {
   id: string;
+  shortId: string; //added 4/9/26 for cleaner urls
   name: string;
   description: string;
   ownerId: string; // visual inferencing maybe:: getting rid of "add" button locally for visuals 
@@ -16,6 +17,7 @@ interface Project {
 //test creating project
 const testProject: Project = {
   id: "1",
+  shortId: "123456790",
   name: "Test Project",
   description: "This is a test project",
   ownerId: "user1",
@@ -31,7 +33,7 @@ export function Dashboard() {
 
   //test project
     async function createProject(project: Project, token: string) {
-    const res = await fetch("http://localhost:3000/projects", {
+        const res = await fetch("http://localhost:3000/projects", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -101,9 +103,9 @@ export function Dashboard() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {projects.map((project) => (
             <div
-              key={project.id}
+              key={project.shortId}
               onClick={async () => { 
-                navigate(`/projects/${project.id}`) //not working rn but soon: would nag to: forge/projects/123456
+                navigate(`/projects/${project.shortId}`) //not working rn but soon: would nag to: forge/projects/123456
               }}
               className="border border-forge-border rounded-2xl p-5 cursor-pointer hover:bg-forge-login-hover transition-colors"
             >

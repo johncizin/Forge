@@ -5,7 +5,7 @@ import FAB from "./components/FAB";
 import ProtectedRoute from "./components/ProtectedRoute";
 import LoginPage from "./pages/loginPage";
 import {Projects, Tasks, Report, Favorites, Settings } from "./pages";
-import { Dashboard } from "./components/Dashboard";
+import { Dashboard } from "./pages/Dashboard";
 import { AuthProvider } from "./context/authContext";
 
 function Layout() {

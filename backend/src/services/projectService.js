@@ -1,6 +1,8 @@
  /*
     Project Service responsible for business logic related to projects
     */
+
+import { nanoid } from "nanoid";
 export class ProjectService {
     /*
     @PARAMS
@@ -19,9 +21,15 @@ export class ProjectService {
     */ 
     async createProject(data, user) {
         console.log("Creating project with data:", data, "for user:", user); // print debug
-        const project = this.projectDomain.createProject({...data}, user); //have to add auth for the user.id to work //added 4/6/26
-        const created = await this.projectRepo.create(project);
+        
+        const project = await this.projectDomain.createProject({
+            ...data,
+            shortId: nanoid(10)
+            }, user);
 
+        console.log("back to service after domain");
+        const created = await this.projectRepo.create(project);
+        console.log("repo fails?");
         return created;
     }
 
