@@ -6,6 +6,7 @@ import { fetchProjectByShortId } from "../services/projectService";
 
 export interface ProjectData {
     name: string;
+    ownerId: string;
     description: string;
     shortId: string;
 }
@@ -31,6 +32,8 @@ export function useProject(shortId: string | undefined) {
         loadProject();
     }
     , [shortId, token]);
+
+    console.log("project data in hook", project); //debug 
 
     return { project, loading, error };
 }

@@ -1,7 +1,6 @@
 //modal form for creating projects
 
 //default cuis used in another page
-// CreateProjectModal.tsx
 import { useState } from "react";
 
 interface Project {

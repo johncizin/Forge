@@ -39,6 +39,7 @@ router.get("/my-projects", requireAuth, async (req, res) => {
 router.get("/:shortId", requireAuth, async (req, res) => {
     try {
         const project = await projectService.getProjectByShortId(req.params.shortId, req.user);
+        console.log("route shortId project: ", project);
         res.json(project);
     } catch (err) {
          res.status(500).json({ error: "Internal server error" });

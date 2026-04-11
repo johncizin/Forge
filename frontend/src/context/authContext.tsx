@@ -81,7 +81,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 }
 
 export function useAuth() {
-  const ctx = useContext(AuthContext);
+  const ctx = useContext(AuthContext); // remember:: use conext basically global var, abstracted into useAuth for easier refactoring
   if (!ctx) throw new Error("useAuth must be used within AuthProvider");
   return ctx;
 }
