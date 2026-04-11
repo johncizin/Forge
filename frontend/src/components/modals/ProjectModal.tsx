@@ -11,7 +11,7 @@ interface Project {
 
 //for type cast
 interface CreateProjectModalProp{
-    onClose: () => void,
+    onClose: () => void, //passed from dashboard
     onCreate: (data: Project) => Promise<void>;
 }
 

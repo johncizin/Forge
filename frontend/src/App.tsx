@@ -4,9 +4,10 @@ import Sidebar from "./components/Sidebar";
 import FAB from "./components/FAB";
 import ProtectedRoute from "./components/ProtectedRoute";
 import LoginPage from "./pages/loginPage";
-import {Projects, Tasks, Report, Favorites, Settings } from "./pages";
+import { Tasks, Report, Favorites, Settings } from "./pages";
 import { Dashboard } from "./pages/Dashboard";
 import { AuthProvider } from "./context/authContext";
+import { Project } from "./pages/ProjectView";
 
 function Layout() {
   const [collapsed, setCollapsed] = useState(false);
@@ -19,11 +20,11 @@ function Layout() {
           <Routes>
             <Route path="/" element={<Navigate to="/dashboard" replace />} />
             <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/projects" element={<Projects />} />
             <Route path="/tasks" element={<Tasks />} />
             <Route path="/report" element={<Report />} />
             <Route path="/favorites" element={<Favorites />} />
             <Route path="/settings" element={<Settings />} />
+            <Route path="projects/:shortId" element={<Project />} />
           </Routes>
         </main>
         <FAB />

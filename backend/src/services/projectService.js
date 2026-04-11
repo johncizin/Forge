@@ -39,8 +39,8 @@ export class ProjectService {
         return await this.projectRepo.getByOwnerId(user.id);
     }
 
-    async getProjectById(projectId, user) {
-        const project = await this.projectRepo.getById(projectId);
+    async getProjectByShortId(shortId, user) {
+        const project = await this.projectRepo.getByShortId(shortId);
         if (!project) throw new Error("Not found");
 
         if (!this.projectDomain.canViewProject(project, user)) {

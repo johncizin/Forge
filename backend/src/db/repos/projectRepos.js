@@ -17,7 +17,7 @@ export async function create(project){
     console.log("into repo from service with project dat:", project);
     try{
         const result = await prisma.project.create({
-            data: project
+            date: project
         })
         console.log("created project in repo:", result);
         return result;
@@ -33,7 +33,7 @@ export async function getById(id){
     })
 }
 
-export async function findByShortId(shortId){
+export async function getByShortId(shortId){
     return prisma.project.findUnique({
         where: {shortId}
     })
