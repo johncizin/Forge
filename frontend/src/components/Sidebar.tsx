@@ -17,7 +17,7 @@ import NavItem from "./NavItem";
 interface SidebarProps {
   collapsed: boolean; 
   setCollapsed: (val: boolean) => void; // state setter 
-}
+} 
 
 
 export default function Sidebar({ collapsed, setCollapsed }: SidebarProps) {

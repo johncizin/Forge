@@ -2,63 +2,58 @@ import { useEffect, useState } from "react";
 import { useAuth } from "../context/authContext";
 import { useNavigate } from "react-router-dom";
 import { Plus, FolderKanban } from "lucide-react";
+import { CreateProjectModal } from "../components/modals/ProjectModal";
 
 //type alias
 //from backend / db 
-interface Project {
-  id: string;
-  shortId: string; //added 4/9/26 for cleaner urls
+interface fetchedProject {
   name: string;
+  shortId: string;
   description: string;
-  ownerId: string; // visual inferencing maybe:: getting rid of "add" button locally for visuals 
-  createdAt: string;
 }
 
-//test creating project
-const testProject: Project = {
-  id: "1",
-  shortId: "123456790",
-  name: "Test Project",
-  description: "This is a test project",
-  ownerId: "user1",
-  createdAt: new Date().toISOString()
-};
+interface createdProject{
+  name: string;
+  description: string;
+}
 
 export function Dashboard() {
   const { token } = useAuth();
   const navigate = useNavigate();
-  const [projects, setProjects] = useState<Project[]>([]);
+  const [projects, setProjects] = useState<fetchedProject[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [showModal, setShowModal] = useState(false);
 
-  //test project
-    async function createProject(project: Project, token: string) {
-        const res = await fetch("http://localhost:3000/projects", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "Authorization": `Bearer ${token}`
-            },
-            body: JSON.stringify({ name: project.name, description: project.description }),
-        });
-        if (!res.ok) throw new Error("Failed to create project");
-        return res.json();
-    }
-    //fetch projects after i call the create test projects 
-    const fetchProjects = async () => {
-        try {
-            const res = await fetch("http://localhost:3000/projects/my-projects", {
-                headers: { Authorization: `Bearer ${token}` },
-            });
-            if (!res.ok) throw new Error("Failed to fetch projects");
-            const data = await res.json();
-            setProjects(data);
-        } catch (err: any) {
-            setError(err.message);
-        } finally {
-            setLoading(false);
-        }
-    };
+  const fetchProjects = async () => {
+      try {
+          const res = await fetch("http://localhost:3000/projects/my-projects", {
+              headers: { Authorization: `Bearer ${token}` },
+          });
+          if (!res.ok) throw new Error("Failed to fetch projects");
+          const data = await res.json();
+          console.log("Fetched projects:", data);
+          setProjects(data);
+      } catch (err: any) {
+          setError(err.message);
+      } finally {
+          setLoading(false);
+      }
+  };
+
+  async function handleCreate(project: createdProject) {
+
+    const res = await fetch("http://localhost:3000/projects", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`
+        },
+        body: JSON.stringify(project),
+    });
+    if (!res.ok) throw new Error("Failed to create project");
+    return await fetchProjects();
+}
 
     useEffect(() => {
         if (token) fetchProjects();
@@ -78,11 +73,10 @@ export function Dashboard() {
             {projects.length} {projects.length === 1 ? "project" : "projects"} 
           </p>
         </div>
-         {/* project button TODO: functionality */}
+         {/* new project button */}
         <button
           onClick={async () => {
-            await createProject(testProject, token!);
-            await fetchProjects();
+            setShowModal(true);
           }}
           className="flex items-center gap-2 bg-forge-accent text-white text-sm font-medium px-4 py-2 rounded-lg hover:opacity-80 transition-opacity"
         >
@@ -120,6 +114,12 @@ export function Dashboard() {
           ))}
         </div>
       )}
+      {showModal && (
+      <CreateProjectModal 
+        onClose = {() => setShowModal(false)}
+        onCreate = {handleCreate}
+      />)}
+      
     </div>
   );
 }
