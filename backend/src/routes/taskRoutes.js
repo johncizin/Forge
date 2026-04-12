@@ -1,2 +1,58 @@
 import express from "express";
+import { requireAuth } from "../middleware/authMiddleware.js";
+import { taskService } from "../container.js";
 
+const router = express.Router();
+
+
+//create task
+router.post("/", requireAuth, async (req, res) => {
+    try {
+        const task = await taskService.createTask(req.body, req.user);
+        res.json(task);
+    } catch (err) {
+        res.status(400).json({ error: err.message });
+    }
+})
+
+//get tasks for project
+router.get("/project/:projectId", requireAuth, async (req, res) => {
+    try {
+        const tasks = await taskService.getTasksByProjectId(req.params.projectId, req.user);
+        res.json(tasks);
+    } catch (err) {
+        res.status(400).json({ error: err.message });
+    }
+})
+
+//get task by shortId
+router.get("/:shortId", requireAuth, async (req, res) => {
+    try {
+        const task = await taskService.getTaskByShortId(req.params.shortId, req.user);
+        res.json(task);
+    } catch (err) {
+        res.status(400).json({ error: err.message });
+    }
+})
+
+//delete task
+router.delete("/:shortId", requireAuth, async (req, res) => {
+    try {
+        await taskService.deleteTask(req.params.shortId, req.user);
+        res.json({ success: true });
+    } catch (err) {
+        res.status(400).json({ error: err.message });
+    }
+})
+
+//update task
+router.put("/:shortId", requireAuth, async (req, res) => {
+    try {
+        const updated = await taskService.updateTask(req.params.shortId, req.body, req.user);
+        res.json(updated);
+    } catch (err) {
+        res.status(400).json({ error: err.message });
+    }
+})
+
+export default router;

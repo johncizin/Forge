@@ -2,6 +2,6 @@
 //this is my util for shortId using nanoId lib 
 import nanoid from "nanoid";
 
-export function generateShortId() {
-    return nanoid(10);
+export function generateShortId(x = 10) {
+    return nanoid(x);
 }

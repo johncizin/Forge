@@ -2,7 +2,7 @@
     Project Service responsible for business logic related to projects
     */
 
-import { generateShortId } from "../utils/id";
+import { generateShortId } from "../utils/id.js";
 export class ProjectService {
     /*
     @PARAMS
