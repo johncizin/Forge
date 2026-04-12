@@ -28,6 +28,7 @@ export function updateProject(project, data) {
 }
 
 //policy functions/ helper methods for authorization. 
+//important for task creation
 export function canEditProject(project, user) {
     return project.ownerId === user.id;
 }

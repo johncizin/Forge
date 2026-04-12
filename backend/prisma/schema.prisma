@@ -35,7 +35,7 @@ model User {
   comments      Comment[]
   favorites     Favorite[]
   memberships   Membership[]
-  assignedTasks Task[] @relation("AssignedTasks")
+  assignedTasks TaskAssignee[]
   ownedProjects Project[]    @relation("OwnerProjects")
 }
 
@@ -43,10 +43,11 @@ model Project {
   id          String          @id @default(uuid())
   shortId     String          @unique //clean url didnt realize it would be the 32 char uuid
   name        String
-  description String
+  description String?
   ownerId     String
   //cardPhoto   String?         @default() // Placeholder for future card photo URL
   createdAt   DateTime        @default(now()) 
+  endDate     DateTime?
 
   //relations
   memberships Membership[]
@@ -60,20 +61,29 @@ model Project {
 
 model Task {
   id          String       @id @default(uuid())
+  shortId     String       @unique
   title       String
-  assigneeId  String?
-  assignee    User?    @relation("AssignedTasks", fields: [assigneeId], references: [id])
   status      TaskStatus   @default(TODO)
-  description String
+  description String?
   projectId   String
   createdAt   DateTime     @default(now())
+  dueDate     DateTime?
+
+  assignees   TaskAssignee[] 
   attachments Attachment[]
   comments    Comment[]
   project     Project      @relation(fields: [projectId], references: [id])
 
   @@index([projectId], map: "Task_projectId_fkey")
-  @@index([assigneeId], map: "Task_assigneeId_fkey")
+}
 
+model TaskAssignee {
+  taskId String
+  userId String
+
+  task Task @relation(fields: [taskId], references: [id])
+  user User @relation(fields: [userId], references: [id])
+  @@id([taskId, userId])
 }
 
 model Membership {

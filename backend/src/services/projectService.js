@@ -2,7 +2,7 @@
     Project Service responsible for business logic related to projects
     */
 
-import { nanoid } from "nanoid";
+import { generateShortId } from "../utils/id";
 export class ProjectService {
     /*
     @PARAMS
@@ -24,7 +24,7 @@ export class ProjectService {
         
         const project = await this.projectDomain.createProject({
             ...data,
-            shortId: nanoid(10)
+            shortId: generateShortId()
             }, user);
 
         console.log("back to service after domain");

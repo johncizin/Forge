@@ -5,6 +5,7 @@
 import { ProjectService } from "./services/projectService.js";
 import { AuthService } from "./services/authService.js";
 import { UserService } from "./services/userService.js";
+import { TaskService } from "./services/taskService.js";
 
 //---Domain---
 import * as projectDomain from "./domain/project.js";
