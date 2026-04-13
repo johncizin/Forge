@@ -1,23 +1,33 @@
 import { generateShortId } from "../utils/id.js";
 
 export class TaskService {
-    constructor({ taskDomain, taskRepo }) {
+    constructor({ taskDomain, taskRepo, projectRepo }) {
         this.taskDomain = taskDomain;
         this.taskRepo = taskRepo;
+        this.projectRepo = projectRepo;
     }
     
     //NOTE: keeping assigneeId nullable until membership service is built
+
+    //careful this gave me so much trouble
     async createTask(data, user) {
+        //get porject
+        const project = await this.projectRepo.getByShortId(data.projectShortId);
+        //if found
+        if(!project) throw new Error("Project not found");
+
         const task = await this.taskDomain.createTask({
             ...data,
-            shortId: generateShortId()
+            shortId: generateShortId(),
+            projectId: project.id
         }, user);
+
         return await this.taskRepo.createTask(task);
     }
 
-    async getTasksByProjectId(projectId, user) {
-        const tasks = await this.taskRepo.getTasksByProjectId(projectId);
-        if (!tasks || tasks.length === 0) throw new Error("Not found");
+    async getTasksByProjectId(shortId, user) {
+        const project = await this.projectRepo.getByShortId(shortId);
+        const tasks = await this.taskRepo.getTasksByProjectId(project.id);
         return tasks;
     }
     

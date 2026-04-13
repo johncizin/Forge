@@ -35,7 +35,8 @@ export const userService = new UserService({
 
 export const taskService = new TaskService({
         taskDomain,
-        taskRepo
+        taskRepo,
+        projectRepo
 });
 
 //membership

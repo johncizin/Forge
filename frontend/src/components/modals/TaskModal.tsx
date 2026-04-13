@@ -1,29 +1,34 @@
 //task modal pretty much copy of project just different fields
 
 import { useState } from "react";
+import type { TaskData } from "../../services/taskService";
 
-interface Task {
-    name: string;
-    description: string;
+/*
+export interface TaskData {
+    title: string; added
+    description: string; added 
+    dueDate?: string; //optional not yet
+    status?: string; //defaults to "TO-DO" in db // and will default for now
 }
+*/
 
 //for type cast
 interface CreateTaskModalProp{
     onClose: () => void, //passed from dashboard
-    onCreate: (data: Task) => Promise<void>;
+    onCreate: (data: TaskData) => Promise<void>;
 }
 
 export function CreateTaskModal({ onClose, onCreate }: CreateTaskModalProp) {
-  const [name, setName] = useState("");
+  const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [loading, setLoading] = useState(false);
 
   //flow for handling submit, makes sure vlaue, looading debounce so it doesnt create 1million times 
   // create project ,  no more debounce, automatically close modal
   async function handleSubmit() {
-    if (!name.trim()) return;
+    if (!title.trim()) return;
     setLoading(true);
-    await onCreate({ name, description });
+    await onCreate({ title, description });
     setLoading(false);
     onClose();
   }
@@ -49,12 +54,12 @@ export function CreateTaskModal({ onClose, onCreate }: CreateTaskModalProp) {
 
         <div className="flex flex-col gap-4">
           <div className="flex flex-col gap-1.5">
-            <label className="text-xs font-medium text-gray-500 uppercase tracking-wide">Name</label>
+            <label className="text-xs font-medium text-gray-500 uppercase tracking-wide">Title</label>
             <input
               type="text"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              placeholder="My awesome project"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              placeholder="My task"
               className="w-full h-9 px-3 rounded-lg border border-gray-200 text-sm focus:outline-none focus:border-black"
             />
           </div>
@@ -64,7 +69,7 @@ export function CreateTaskModal({ onClose, onCreate }: CreateTaskModalProp) {
             <textarea
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              placeholder="What's this project about?"
+              placeholder="What's this task about?"
               rows={3}
               className="w-full px-3 py-2.5 rounded-lg border border-gray-200 text-sm resize-none focus:outline-none focus:border-black"
             />
@@ -77,10 +82,10 @@ export function CreateTaskModal({ onClose, onCreate }: CreateTaskModalProp) {
           </button>
           <button
             onClick={handleSubmit}
-            disabled={!name.trim() || loading}
+            disabled={!title.trim() || loading}
             className="px-4 h-9 rounded-lg bg-black text-white text-sm font-medium disabled:opacity-40"
           >
-            {loading ? "Creating..." : "Create project"}
+            {loading ? "Creating..." : "Create task"}
           </button>
         </div>
       </div>

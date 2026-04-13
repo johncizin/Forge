@@ -3,6 +3,7 @@ import { useAuth } from "../context/authContext";
 import { useNavigate } from "react-router-dom";
 import { Plus, FolderKanban } from "lucide-react";
 import { CreateProjectModal } from "../components/modals/ProjectModal";
+import { fetchProjects as fetchProjectsService, createProject } from "../services/projectService";
 
 //type alias
 //from backend / db 
@@ -26,34 +27,21 @@ export function Dashboard() {
   const [showModal, setShowModal] = useState(false);
 
   const fetchProjects = async () => {
-      try {
-          const res = await fetch("http://localhost:3000/projects/my-projects", {
-              headers: { Authorization: `Bearer ${token}` },
-          });
-          if (!res.ok) throw new Error("Failed to fetch projects");
-          const data = await res.json();
-          console.log("Fetched projects:", data);
-          setProjects(data);
-      } catch (err: any) {
-          setError(err.message);
-      } finally {
-          setLoading(false);
-      }
+    try{
+      setLoading(true);
+      const data = await fetchProjectsService(token!);
+      setProjects(data); 
+    }catch(err){
+      setError((err as Error).message);
+    }finally{
+      setLoading(false);
+    }
   };
 
-  async function handleCreate(project: createdProject) {
-
-    const res = await fetch("http://localhost:3000/projects", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${token}`
-        },
-        body: JSON.stringify(project),
-    });
-    if (!res.ok) throw new Error("Failed to create project");
-    return await fetchProjects();
-}
+  async function handleProjectCreate(project: createdProject) {
+    await createProject(project, token!);
+    await fetchProjects();
+  }
 
     useEffect(() => {
         if (token) fetchProjects();
@@ -117,7 +105,7 @@ export function Dashboard() {
       {showModal && (
       <CreateProjectModal 
         onClose = {() => setShowModal(false)}
-        onCreate = {handleCreate}
+        onCreate = {handleProjectCreate}
       />)}
       
     </div>

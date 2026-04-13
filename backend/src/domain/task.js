@@ -3,15 +3,17 @@
 */
 
 export function createTask({ title, description, shortId, projectId }, user) {
-    if (!title || !shortId || !projectId || !user.id) {
+    console.log("in domain")
+    if (!title || !projectId || !user.id || !shortId) {
         throw new Error("Missing required fields");
     }
     
+    console.log("through domain")
     return {
         title,
         description,
-        projectId,
-        shortId
+        shortId,
+        projectId
     }
 }
 

@@ -1,5 +1,5 @@
 import express from "express";
-import { requireAuth } from "../middleware/authMiddleware.js";
+import { requireAuth } from "../middleware/requireAuth.js";
 import { taskService } from "../container.js";
 
 const router = express.Router();
@@ -9,8 +9,10 @@ const router = express.Router();
 router.post("/", requireAuth, async (req, res) => {
     try {
         const task = await taskService.createTask(req.body, req.user);
+        console.log("created task:", task);
         res.json(task);
     } catch (err) {
+        console.error("create task error:", err);
         res.status(400).json({ error: err.message });
     }
 })
@@ -21,6 +23,7 @@ router.get("/project/:projectId", requireAuth, async (req, res) => {
         const tasks = await taskService.getTasksByProjectId(req.params.projectId, req.user);
         res.json(tasks);
     } catch (err) {
+        console.error("task route: ",err);
         res.status(400).json({ error: err.message });
     }
 })
