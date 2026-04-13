@@ -17,7 +17,7 @@ export async function create(project){
     console.log("into repo from service with project dat:", project);
     try{
         const result = await prisma.project.create({
-            date: project
+            data: project
         })
         console.log("created project in repo:", result);
         return result;

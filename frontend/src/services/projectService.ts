@@ -6,7 +6,7 @@ export async function fetchProjects(token: string) {
         headers: { Authorization: `Bearer ${token}` },
     });
     if (!res.ok) throw new Error("Failed to fetch projects");
-    return await res.json();
+    return res.json();
 }
 
 //dashboard create
@@ -20,7 +20,7 @@ export async function createProject(project: { name: string; description: string
         body: JSON.stringify(project),
     });
     if (!res.ok) throw new Error("Failed to create project");
-    return await res.json();
+    return res.json();
 }
 
 //project view fetch
@@ -29,5 +29,8 @@ export async function fetchProjectByShortId(shortId: string, token: string) {
         headers: { Authorization: `Bearer ${token}` }
     });
     if (!res.ok) throw new Error("Failed to fetch project");
-    return await res.json();
+    return res.json();
 }
+
+//update
+//delete
