@@ -8,6 +8,7 @@ import { createTask } from "../services/taskService";
 import type { FetchedTaskData } from "../services/taskService";
 import { useState } from "react";
 import { CreateTaskModal } from "../components/modals/TaskModal";
+import { FolderKanban } from "lucide-react";
 
 export function Project() {
   //using patterns from taskService and taskHook
@@ -59,17 +60,10 @@ export function Project() {
 
       {/* Task list */}
       {tasks.length === 0 ? (
-        <div className="flex flex-col items-center justify-center h-64 text-forge-muted">
-          <p className="text-lg mb-4">No tasks yet</p>
-          {project?.ownerId === user?.id && (
-            <button
-              onClick={() => setShowModal(true)}
-              className="flex items-center gap-2 bg-forge-accent text-white text-sm font-medium px-4 py-2 rounded-lg hover:opacity-80 transition-opacity"
-            >
-              <Plus size={16} />
-              Create your first task
-            </button>
-          )}
+        <div className="flex flex-col items-center justify-center h-64 border border-dashed border-forge-border rounded-2xl text-forge-muted">
+          <FolderKanban size={36} className="mb-3 opacity-40" />
+          <p className="font-medium">No tasks yet</p>
+          <p className="text-sm mt-1">Create one to get started</p>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

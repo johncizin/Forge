@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/authContext";
-import { Anvil } from "lucide-react";
+import { Anvil, Eye, EyeOff } from "lucide-react";
+
 
 
 export default function LoginPage() {
@@ -12,6 +13,7 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false) //eye off
 
   const { login, register } = useAuth();
   const navigate = useNavigate();
@@ -34,6 +36,10 @@ export default function LoginPage() {
       setLoading(false);
     }
   };
+
+  const handleEyeToggle = () => {
+
+  }
 
   return (
     // page container
@@ -87,14 +93,20 @@ export default function LoginPage() {
 
             <div className="flex flex-col gap-1.5">
               <label className="text-sm text-forge-login-text">Password</label>
+              <div className="relative">
               <input
-                type="password"
+                type= {showPassword ? "text" : "password"}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="*******"
+                autoComplete="current-password"
                 required
-                className="bg-forge-bg border hover:bg-forge-login-hover border-forge-border rounded-lg px-3 py-2 text-sm text-forge-login-text placeholder-forge-muted/50 focus:outline-none focus:border-forge-login-focus-border transition-colors"
+                className="bg-forge-bg border hover:bg-forge-login-hover border-forge-border rounded-lg px-3 py-2 pr-10 text-sm text-forge-login-text placeholder-forge-muted/50 focus:outline-none focus:border-forge-login-focus-border transition-colors w-full"
               />
+               <span className="absolute right-3 top-1/2 -translate-y-1/2 cursor-pointer text-forge-muted" onClick={() => setShowPassword(!showPassword)}>
+                 { showPassword ? <Eye size={16}/> : <EyeOff size={16} /> }
+              </span>
+              </div>
             </div>
 
             {error && (
