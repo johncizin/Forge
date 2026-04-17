@@ -15,7 +15,7 @@ import * as taskDomain from "./domain/task.js";
 //---Repositories---
 import * as projectRepo from "./db/repos/projectRepos.js";
 import * as userRepo from "./db/repos/userRepos.js";
-import * as taskRepo from "./db/repos/taskRepo.js";
+import * as taskRepo from "./db/repos/taskRepos.js";
 
 
 export const projectService = new ProjectService({
