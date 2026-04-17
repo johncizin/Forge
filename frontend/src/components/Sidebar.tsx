@@ -12,6 +12,7 @@ import {
   PanelLeftOpen,
 } from "lucide-react";
 import NavItem from "./NavItem";
+import { useAuth } from "../context/authContext"
 
 //this is only needed for text check/ cast?
 interface SidebarProps {
@@ -21,6 +22,8 @@ interface SidebarProps {
 
 
 export default function Sidebar({ collapsed, setCollapsed }: SidebarProps) {
+  const { user } = useAuth();
+  const name = user?.name+"'s";
   return (
     <aside
       className={`h-screen bg-forge-sidebar flex flex-col border-r border-forge-border shrink-0 transition-all duration-200 ${
@@ -34,7 +37,7 @@ export default function Sidebar({ collapsed, setCollapsed }: SidebarProps) {
             <div className="w-7 h-7 rounded-md bg-forge-accent flex items-center justify-center shrink-0">
               <Anvil size={16} color="white" />
             </div>
-            <span className="text-white font-bold tracking-tight text-base">Forge</span>
+            <span className="text-black font-bold tracking-tight text-base">{name} Forge</span>
           </div>
         )}
         {collapsed && (

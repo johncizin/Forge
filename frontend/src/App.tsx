@@ -40,6 +40,7 @@ export default function App() {
       <BrowserRouter>
         <Routes>
           <Route path="/login" element={<LoginPage />} /> {/* login page route everything is a function */}
+          <Route path="/" element={<Navigate to="/login" replace />} />
           <Route path="/*" element={<Layout />} /> {/* routes to layout pages */}
         </Routes>
       </BrowserRouter>

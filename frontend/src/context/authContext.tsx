@@ -1,6 +1,7 @@
 import { createContext, useContext, useState, useEffect } from "react";
 
 interface User {
+  name: string
   id: string;
   email: string;
 }
@@ -47,6 +48,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
 
     const data = await res.json();
+    console.log(data, "Data in useContext")
     localStorage.setItem("forge_token", data.token);
     localStorage.setItem("forge_user", JSON.stringify(data.user));
     setToken(data.token);
