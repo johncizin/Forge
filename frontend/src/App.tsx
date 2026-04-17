@@ -4,10 +4,11 @@ import Sidebar from "./components/Sidebar";
 import FAB from "./components/FAB";
 import ProtectedRoute from "./components/ProtectedRoute";
 import LoginPage from "./pages/loginPage";
-import { Tasks, Report, Favorites, Settings } from "./pages";
+import { Tasks, Report, Favorites } from "./pages";
 import { Dashboard } from "./pages/Dashboard";
 import { AuthProvider } from "./context/authContext";
 import { Project } from "./pages/ProjectView";
+import { Settings } from "./pages/Settings"
 
 function Layout() {
   const [collapsed, setCollapsed] = useState(false);

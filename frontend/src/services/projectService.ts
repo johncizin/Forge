@@ -10,7 +10,7 @@ export async function fetchProjects(token: string) {
 }
 
 //dashboard create
-export async function createProject(project: { name: string; description: string }, token: string) {
+export async function createProject(project: { name: string; description?: string }, token: string) {
     const res = await fetch("http://localhost:3000/projects", {
         method: "POST",
         headers: {

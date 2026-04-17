@@ -41,7 +41,8 @@ export async function getByShortId(shortId){
 
 export async function getByOwnerId(ownerId){
     return prisma.project.findMany({
-        where: {ownerId}
+        where: {ownerId},
+        orderBy: {createdAt: "desc"}
     })
 }
 

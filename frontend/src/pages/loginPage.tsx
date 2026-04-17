@@ -36,11 +36,7 @@ export default function LoginPage() {
       setLoading(false);
     }
   };
-
-  const handleEyeToggle = () => {
-
-  }
-
+ 
   return (
     // page container
     <div className="min-h-screen bg-forge-bg flex items-center justify-center">

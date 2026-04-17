@@ -11,7 +11,7 @@ export function createTask({ title, description, shortId, projectId }, user) {
     console.log("through domain")
     return {
         title,
-        description,
+        description: description || "",
         shortId,
         projectId
     }

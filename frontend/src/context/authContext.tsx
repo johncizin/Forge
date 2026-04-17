@@ -8,6 +8,7 @@ interface User {
 interface AuthContextType {
   user: User | null;
   token: string | null;
+  loading: boolean
   login: (email: string, password: string) => Promise<void>;
   register: (name: string, email: string, password: string) => Promise<void>;
   logout: () => void;
@@ -18,6 +19,7 @@ const AuthContext = createContext<AuthContextType | null>(null);
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [token, setToken] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
 
   // local storage: from web
   //use effect runs every render i think?
@@ -28,6 +30,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setToken(storedToken);
       setUser(JSON.parse(storedUser));
     }
+    setLoading(false);
   }, []);
 
   //fetching basically my curl but in ts
@@ -74,7 +77,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   return (
-    <AuthContext.Provider value={{ user, token, login, register, logout }}>
+    <AuthContext.Provider value={{ user, token, loading ,login, register, logout}}>
       {children}
     </AuthContext.Provider>
   );
