@@ -24,8 +24,9 @@ export class ProjectService {
         
         const project = await this.projectDomain.createProject({
             ...data,
-            shortId: generateShortId()
-            }, user);
+            shortId: generateShortId(),
+            ownerId: user.id
+            });
 
         console.log("back to service after domain");
         const created = await this.projectRepo.create(project);

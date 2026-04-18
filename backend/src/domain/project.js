@@ -4,14 +4,14 @@ Rules for the project
 
 //TODO: Pretty errors
 
-export function createProject({ name, description, shortId}, user) {
-    if (!name || !shortId || !user.id) {
+export function createProject({ name, description, shortId, ownerId }) {
+    if (!name || !shortId || !ownerId) {
         throw new Error("Missing required fields");
     }
     
     return {
         name,
-        ownerId: user.id,
+        ownerId,
         description: description || "",
         shortId,
     } //everything else handled by PRISMA (id, createdAt)
@@ -38,9 +38,7 @@ export function canViewProject(project, user) {
     return project.ownerId === user.id;
 }
 
-export function canDeleteProject(project, user) {
-    return project.ownerId === user.id;
-}
+export const canDeleteProject = canEditProject; //same functionality
 
 
 

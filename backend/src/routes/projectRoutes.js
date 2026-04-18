@@ -26,9 +26,20 @@ router.post("/", requireAuth, async (req, res) => {
 })
 
 //for dashboard GUI
+//this will be defaulted to showing all projects user is owner or member of
 router.get("/my-projects", requireAuth, async (req, res) => {
     try {
         const projects = await projectService.getMyProjects(req.user);
+        res.json(projects);
+    } catch (err) {
+        res.status(400).json({ error: err.message });
+    }
+})
+
+//for sorting later
+router.get("/owned-projects", requireAuth, async(req, res) => {
+    try{
+          const projects = await projectService.getOwnedProjects(req.user);
         res.json(projects);
     } catch (err) {
         res.status(400).json({ error: err.message });

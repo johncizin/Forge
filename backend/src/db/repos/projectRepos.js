@@ -53,7 +53,7 @@ export async function update(project){
     })
 }
 
-export async function deleteProject(id){
+export async function deleteById(id){
     return prisma.project.delete({
         where: {id}
     })
