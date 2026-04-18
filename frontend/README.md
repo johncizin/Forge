@@ -8,6 +8,7 @@
 
 # Dashboard Redesign
 <img src="../mockupImages/MockupDashboard.png" alt="dashboard redesign mockup">
+
 ## Project
 * Sorting
     * Default - created: 
