@@ -20,7 +20,7 @@ import * as membershipDomain from "./domain/membership.js";
 import * as projectRepo from "./db/repos/projectRepos.js";
 import * as userRepo from "./db/repos/userRepos.js";
 import * as taskRepo from "./db/repos/taskRepos.js";
-//import * as inviteRepo from "./db/repos/inviteRepos.js";
+import * as inviteRepo from "./db/repos/inviteRepos.js";
 import * as membershipRepo from "./db/repos/membershipRepos.js";
 
 export const projectService = new ProjectService({
@@ -53,11 +53,10 @@ export const membershipService = new MembershipService({
 
 export const inviteService = new InviteService({
         inviteDomain,
-        inviteRepo, //doesnt exist yet
+        inviteRepo, 
         membershipService,
         membershipRepo,
         projectRepo
 })
 
 
-//rest will come

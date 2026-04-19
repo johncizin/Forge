@@ -47,6 +47,7 @@ export function Project() {
             <Plus size={16} />
             New Task
           </button>
+          
         )}
       </div>
 
