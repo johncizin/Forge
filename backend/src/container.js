@@ -40,7 +40,6 @@ export const taskService = new TaskService({
         taskRepo,
         projectRepo,
         membershipRepo
-
 });
 
 //invite

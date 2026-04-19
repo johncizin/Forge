@@ -2,7 +2,6 @@ import express from "express";
 
 //import { inviteService } from "../container.js"
 import { requireAuth } from "../middleware/requireAuth.js" //not sure if necessary idk, i guess mine as well check it has to be good practice
-import { isMember } from "../utils/membershipUtil.js";
 // import { inivteService } from "../container.js";
 
 //dilemma here:
