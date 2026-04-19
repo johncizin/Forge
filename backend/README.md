@@ -78,3 +78,30 @@ curl -X POST http://localhost:3000/auth/register \
   -d '{"email": "test1@test.com", "password": "1234"}'
 
 ## Login: 
+
+
+# Membership
+* The initial plan for Membership was a pipeline convention the same as my other service. 
+* Though, the complexity of it led me to believe the right method was util functions, but I didn't see the whole problem yet
+
+---
+## The Issues:
+### Membership Table (DB)
+* Membership directly integrates with Project asking the question: "Who is the owner" (Kind of because it is a separate field in the DB), "Who are the members", "Who can view this project"
+### TaskAssignee (DB)
+* Inegrates directly with Task, fk with UserID and TaskId
+* Asks the question: "Who is assigned to this project."
+
+---
+### Problems
+* I ran into separation of concerns, membership for both Project and Task is essential to the integrity and functionality of the project.
+* Clean routing, initially i though about "deleting" and viewing on the frontend. 
+* Managing adding from invite 
+
+## Resolution:
+* Membership follows the standard service pattern 
+* Membership is mounted under ("/projects") and ("/tasks") 
+* RESTful pattern maintained for clean URLs ("/projects/:id/members)
+* Invite service calls into MembershipService on acceptance — one-way dependency, invite knows about membership, membership does not know about invites
+* `isProjectMember` and `isTaskAssignee` live in membershipRepo and are imported directly by projectService and taskService for authorization gates
+* No separate util file — repo functions serve that purpose
