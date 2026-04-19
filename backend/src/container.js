@@ -16,11 +16,13 @@ import * as taskDomain from "./domain/task.js";
 import * as projectRepo from "./db/repos/projectRepos.js";
 import * as userRepo from "./db/repos/userRepos.js";
 import * as taskRepo from "./db/repos/taskRepos.js";
+import * as membershipRepo from "./db/repos/membershipRepos.js";
 
 
 export const projectService = new ProjectService({
         projectDomain,
-        projectRepo
+        projectRepo,
+        membershipRepo
 });
 
 export const authService = new AuthService({
@@ -36,8 +38,12 @@ export const userService = new UserService({
 export const taskService = new TaskService({
         taskDomain,
         taskRepo,
-        projectRepo
+        projectRepo,
+        membershipRepo
+
 });
+
+//invite
 
 //membership
 

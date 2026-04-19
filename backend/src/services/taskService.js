@@ -1,10 +1,11 @@
 import { generateShortId } from "../utils/id.js";
 
 export class TaskService {
-    constructor({ taskDomain, taskRepo, projectRepo }) {
+    constructor({ taskDomain, taskRepo, projectRepo, membershipRepo }) {
         this.taskDomain = taskDomain;
         this.taskRepo = taskRepo;
         this.projectRepo = projectRepo;
+        this.membershipRepo = membershipRepo;
     }
     
     //NOTE: keeping assigneeId nullable until membership service is built

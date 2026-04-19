@@ -8,10 +8,12 @@ export class ProjectService {
     @PARAMS
         projectDomain: domain logic (rules)
         projectRepo: data access (db interface)
+        membershipRepo: data access (db interface)
     */
-    constructor({ projectDomain, projectRepo }) { // REMEMBER: this is passed from container:: "../container.js"
+    constructor({ projectDomain, projectRepo, membershipRepo }) { // REMEMBER: this is passed from container:: "../container.js"
         this.projectDomain = projectDomain;
         this.projectRepo = projectRepo;
+        this.membershipRepo = membershipRepo;
     }
 
     /* 

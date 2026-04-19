@@ -39,6 +39,18 @@ export async function getByShortId(shortId){
     })
 }
 
+export async function getProjectsForUser(userId) {
+    return prisma.project.findMany({
+        where: {
+            OR: [
+                { ownerId: userId },
+                { memberships: { some: { userId } } }
+            ]
+        },
+        orderBy: { createdAt: "desc" }
+    });
+}
+
 export async function getByOwnerId(ownerId){
     return prisma.project.findMany({
         where: {ownerId},
