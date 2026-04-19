@@ -1,17 +1,3 @@
-/*
-model PendingInvite {
-  id        String       @id @default(uuid())
-  email     String
-  projectId String
-  role      Role         @default(MEMBER)
-  token     String       @unique
-  status    InviteStatus @default(PENDING)
-  createdAt DateTime     @default(now())
-  expiresAt DateTime
-  project   Project      @relation(fields: [projectId], references: [id], onDelete: Cascade)
-
-}
-*/
 
 //Utilities
 import { validateEmail } from "../utils/validation.js";
@@ -32,16 +18,14 @@ export class InviteService {
 
     //only owner? i think so for now
     //writing it as only owner atm
-    async sendInvite(projectId, email, role , user) {
+    async sendInvite(projectId, email, user) {
         const project = await this.projectRepo.getByShortId(projectId);
         if(!project) throw new Error("Project Not Found");
-        if(!validateEmail(email)) throw new Error("Invalid email format");
         if(!this.inviteDomain.canInvite(project, user)) throw new Error("Unauthorized");
         
         const invite = await this.inviteDomain.createInvite({
            projectId,
            email,
-           role,
            token: generateShortId(),
            expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) //7 days: might just make this prisma default we'll see
         });
@@ -51,8 +35,7 @@ export class InviteService {
     async acceptInvite(inviteId, user) {
         const invite = await this.inviteRepo.getInviteById(inviteId);
         if (!invite) throw new Error("Invite not found");
-        if (invite.status !== "PENDING") throw new Error("Invite is not pending");
-        if(new Date() > new Date(invite.expiresAt)) throw new Error("Invite has expired");
+        this.inviteDomain.canAcceptInvite(invite, user); //theoretically dont need to check, because itll throw otherwise
 
         await this.membershipService.addMemberToProject(invite.projectId, user.id, user);
         return await this.inviteRepo.updateInviteStatus(inviteId, "ACCEPTED");
