@@ -2,6 +2,10 @@
 //Utilities
 import { generateShortId } from "../utils/id.js"
 
+//Resend 
+import { Resend } from "resend";
+const resend = new Resend(process.env.RESEND_KEY);
+
 /* 
 Invite Service needs access to 
 */
@@ -28,16 +32,30 @@ export class InviteService {
            token: generateShortId(),
            expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) //7 days: might just make this prisma default we'll see
         });
-        return await this.inviteRepo.createInvite(invite);
+        const saved =  await this.inviteRepo.createInvite(invite);
+
+        //wiring resend: 
+        await resend.emails.send({
+            from: "invite@johncizin.com",
+            to: email,
+            subject: `You're invited to join ${project.name} on Forge`,
+            html: `<p>You've been invited to join <strong>${project.name}</strong> on Forge.</p>
+               <p><a href="http://localhost:5173/invites/accept/${saved.token}">Accept Invite</a></p>
+               <p>This invite expires in 7 days.</p>`
+        })
+
+        return saved;
+
     }
 
-    async acceptInvite(inviteId, user) {
-        const invite = await this.inviteRepo.getInviteById(inviteId);
+    async acceptInvite(token, user) {
+        const invite = await this.inviteRepo.getInviteByToken(token);
         if (!invite) throw new Error("Invite not found");
         this.inviteDomain.canAcceptInvite(invite, user); //theoretically dont need to check, because itll throw otherwise
 
+        console.log("Adding member to project");
         await this.membershipService.addMemberToProject(invite.projectId, user.id, user);
-        return await this.inviteRepo.updateInviteStatus(inviteId, "ACCEPTED");
+        return await this.inviteRepo.updateInviteStatus(invite.id, "ACCEPTED");
     }
 
     async declineInvite(inviteId, user) {

@@ -29,9 +29,9 @@ router.post("/", requireAuth, async (req, res) => {
 })
 
 //accept invite
-router.post("/accept/:inviteId", requireAuth, async (req, res) => {
+router.post("/accept/:token", requireAuth, async (req, res) => {
     try{
-        const invite = await inviteService.acceptInvite(req.params.inviteId, req.user);
+        const invite = await inviteService.acceptInvite(req.params.token, req.user);
         res.json(invite);
     } catch (err) {
         res.status(400).json({ error: err.message });
