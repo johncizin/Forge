@@ -10,8 +10,15 @@ export function Settings(){
         logout();
         navigate("/login")
     }
-
     return(
-        <button onClick={handleLogout} className="...">Logout <LogOut size={16}></LogOut> </button>
+        <div className="p-9">
+            <div className="flex items-center justify-between mb-8">
+                <h1 className="text-2xl font-bold text-forge-login-text"> My Settings</h1>
+                <button onClick={handleLogout}  className="flex items-center gap-2 bg-forge-accent text-white text-sm font-medium px-4 py-2 rounded-lg hover:opacity-80 transition-opacity">
+                    <LogOut size={16}/>
+                    Logout
+                </button>
+            </div>
+        </div>
     );
 }

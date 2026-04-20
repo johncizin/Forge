@@ -26,3 +26,13 @@
     * helps differentiate what is owned vs. what you are a member of
 * Adding # of task
     * quality of life
+
+# Task
+* Need task fields
+    1. Status - set/update 
+    2. Add member to Task
+
+# Filtering:
+* Going to abstract it out because and inject dependencies. 
+* Same component for project and task. Different endpoints and different filter presets
+
