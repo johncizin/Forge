@@ -33,9 +33,11 @@ export function canEditProject(project, user) {
     return project.ownerId === user.id;
 }
 
-export function canViewProject(project, user) {
-    // For now, only the owner can view the project
-    return project.ownerId === user.id;
+export function canViewProject(project, user, membership) {
+    if (project.ownerId === user.id || membership) {
+        return true;
+    }
+    return false;
 }
 
 export const canDeleteProject = canEditProject; //same functionality

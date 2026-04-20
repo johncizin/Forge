@@ -9,6 +9,7 @@ import { Dashboard } from "./pages/Dashboard";
 import { AuthProvider } from "./context/authContext";
 import { Project } from "./pages/ProjectView";
 import { Settings } from "./pages/Settings"
+import { Invite } from "./pages/Invite";
 
 function Layout() {
   const [collapsed, setCollapsed] = useState(false);
@@ -40,6 +41,7 @@ export default function App() {
       <BrowserRouter>
         <Routes>
           <Route path="/login" element={<LoginPage />} /> {/* login page route everything is a function */}
+          <Route path="/invites/:token" element={<Invite />} /> {/* invite page route with token param */}
           <Route path="/" element={<Navigate to="/login" replace />} />
           <Route path="/*" element={<Layout />} /> {/* routes to layout pages */}
         </Routes>

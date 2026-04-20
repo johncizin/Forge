@@ -40,7 +40,7 @@ export class InviteService {
             to: email,
             subject: `You're invited to join ${project.name} on Forge`,
             html: `<p>You've been invited to join <strong>${project.name}</strong> on Forge.</p>
-               <p><a href="http://localhost:5173/invites/accept/${saved.token}">Accept Invite</a></p>
+               <p><a href="http://localhost:5173/invites/${saved.token}">Accept Invite</a></p>
                <p>This invite expires in 7 days.</p>`
         })
 
@@ -48,13 +48,16 @@ export class InviteService {
 
     }
 
+    //not working need to revisit tomrrow (4/20/26)
     async acceptInvite(token, user) {
         const invite = await this.inviteRepo.getInviteByToken(token);
         if (!invite) throw new Error("Invite not found");
+        console.log("invite email:", invite.email, "user email:", user.email);
         this.inviteDomain.canAcceptInvite(invite, user); //theoretically dont need to check, because itll throw otherwise
 
         console.log("Adding member to project");
         await this.membershipService.addMemberToProject(invite.projectId, user.id, user);
+        console.log("Member added to project, updating invite status");
         return await this.inviteRepo.updateInviteStatus(invite.id, "ACCEPTED");
     }
 

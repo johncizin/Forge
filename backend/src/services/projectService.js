@@ -38,15 +38,24 @@ export class ProjectService {
 
     //user specific
     // PARAMS: user: { id, name, ... }
+    //returns all projects owner or member
     async getMyProjects(user) {
+        return await this.projectRepo.getProjectsForUser(user.id);
+    }
+
+    //addition for filtering
+    async getOwnedProjects(user) {
         return await this.projectRepo.getByOwnerId(user.id);
     }
 
+    //fetching project details
     async getProjectByShortId(shortId, user) {
         const project = await this.projectRepo.getByShortId(shortId);
         if (!project) throw new Error("Not found");
-
-        if (!this.projectDomain.canViewProject(project, user)) {
+        //think its best for service to fetch and pass to domain for authorization?
+        const membership = this.membershipRepo.isProjectMember(user.id, project.id);
+        //either way its clean and working fine
+        if (!this.projectDomain.canViewProject(project, user, membership)) {
             throw new Error("Unauthorized");
         }
         return project;

@@ -33,7 +33,7 @@ export async function sendInviteByEmail(projectShortId: string, email: string, t
 
 //invite behavior
 export async function acceptInvite(inviteId: string, token: string) {
-    const res = await fetch(`http://localhost:3000/invites/accept/${inviteId}`, {
+    const res = await fetch(`http://localhost:3000/invites/${inviteId}`, {
         method: "POST",
         headers: { Authorization: `Bearer ${token}` }
     });

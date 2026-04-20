@@ -2,6 +2,7 @@
 
 //default cuis used in another page
 import { useState } from "react";
+import { FolderKanban } from "lucide-react";
 
 interface Project {
     name: string;
@@ -38,10 +39,7 @@ export function CreateProjectModal({ onClose, onCreate }: CreateProjectModalProp
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-2.5">
             <div className="w-8 h-8 bg-black rounded-lg flex items-center justify-center">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <rect x="2" y="3" width="20" height="14" rx="2"/>
-                <path d="M8 21h8M12 17v4"/>
-              </svg>
+              <FolderKanban size={16} color="white" />
             </div>
             <span className="text-sm font-medium">New project</span>
           </div>

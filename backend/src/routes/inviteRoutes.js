@@ -29,8 +29,10 @@ router.post("/", requireAuth, async (req, res) => {
 })
 
 //accept invite
-router.post("/accept/:token", requireAuth, async (req, res) => {
+router.post("/:token", requireAuth, async (req, res) => {
+    console.log("hit accept enpoint")
     try{
+        console.log("Accepting invite with token:", req.params.token);
         const invite = await inviteService.acceptInvite(req.params.token, req.user);
         res.json(invite);
     } catch (err) {

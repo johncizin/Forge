@@ -6,27 +6,41 @@ export class MembershipService {
 
     //role hardcoded
     async addMemberToProject(projectId, userId, user) {
-        const existingMember = await this.membershipRepo.isProjectMember(projectId, userId);
-        if (existingMember) throw new Error("User is already a member of the project");
-        
-        const membership = await this.membershipDomain.createMembership({
-            projectId,
-            userId,
-            role: "MEMBER"
-        });
-        
-        return await this.membershipRepo.addMemberToProject(membership);
+    const existingMember = await this.membershipRepo.isProjectMember(projectId, userId);
+    if (existingMember) throw new Error("User is already a member of the project");
+    
+    const membership = await this.membershipDomain.createMembership({
+        projectId,
+        userId,
+        role: "MEMBER"
+    });
+    
+    try {
+        const result = await this.membershipRepo.addMemberToProject(membership.projectId, membership.userId);
+        console.log("Result from addMemberToProject:", result);
+        return result;
+    } catch (err) {
+        console.error("repo addMemberToProject error:", err.message);
+        throw err;
     }
+}
+
 
     async removeMemberFromProject(projectId, userId, user) {
-        const membership = await this.membershipRepo.isProjectMember(projectId, userId);
-        if (!membership) throw new Error("Membership not found");
+        try {
+            const membership = await this.membershipRepo.isProjectMember(projectId, userId);
+            if (!membership) throw new Error("Membership not found");
 
         if (!this.membershipDomain.canRemoveMember(membership, user)) {
             throw new Error("Unauthorized");
         }
         return await this.membershipRepo.removeMemberFromProject(projectId, userId);
+        } catch (err) {
+            console.error("Error in removeMemberFromProject:", err.message);
+            throw err; // rethrow the error after logging
+        }
     }
+
 
     async getProjectMembers(projectId, user) {
         const memberships = await this.membershipRepo.getProjectMembers(projectId);

@@ -49,3 +49,11 @@ export async function getInvitesByEmail(email){
         }
     })
 }
+
+export async function getInviteByToken(token){
+    return prisma.pendingInvite.findUnique({
+        where: {
+            token: token
+        }
+    })
+}

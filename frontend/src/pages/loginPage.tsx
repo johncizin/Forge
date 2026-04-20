@@ -29,12 +29,20 @@ export default function LoginPage() {
       } else {
         await register(name, email, password);
       }
-      navigate("/dashboard");
+      const pendingInvite = localStorage.getItem("pendingInvite");
+      if (pendingInvite) {
+        localStorage.removeItem("pendingInvite");
+        navigate(`/invite/${pendingInvite}`);
+        return;
+      }else{
+          navigate("/dashboard");
+      }
     } catch (err: any) {
       setError(err.message);
     } finally {
       setLoading(false);
     }
+
   };
  
   return (

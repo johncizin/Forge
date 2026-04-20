@@ -18,7 +18,7 @@ export class AuthService {
         }
 
         const { passwordHash, ...safeUser } = user;
-        const token = jwt.sign({ userId: user.id}, process.env.JWT_SECRET, { expiresIn: '1h' }); //testing "secret" REPLACE
+        const token = jwt.sign({ userId: user.id, email: user.email }, process.env.JWT_SECRET, { expiresIn: '1h' }); //testing "secret" REPLACE
 
         
         return { user: safeUser, token };
