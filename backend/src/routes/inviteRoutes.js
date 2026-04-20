@@ -1,8 +1,7 @@
 import express from "express";
 
-//import { inviteService } from "../container.js"
 import { requireAuth } from "../middleware/requireAuth.js" //not sure if necessary idk, i guess mine as well check it has to be good practice
-// import { inivteService } from "../container.js";
+import { inviteService } from "../container.js";
 
 //dilemma here:
 /*
@@ -20,31 +19,62 @@ const router = express.Router();
 
 //sending invite
 router.post("/", requireAuth, async (req, res) => {
-
+    try{
+        const invite = await inviteService.sendInvite(req.body.projectShortId, req.body.email, req.user);
+        res.json(invite);
+    } catch (err) {
+        console.error("invite error:", err.message);
+        res.status(400).json({ error: err.message });
+    }
 })
 
 //accept invite
 router.post("/accept/:inviteId", requireAuth, async (req, res) => {
-
+    try{
+        const invite = await inviteService.acceptInvite(req.params.inviteId, req.user);
+        res.json(invite);
+    } catch (err) {
+        res.status(400).json({ error: err.message });
+    }
 })
 
 //decline invite
 router.post("/decline/:inviteId", requireAuth, async(req, res) => {
-
+    try{
+        const invite = await inviteService.declineInvite(req.params.inviteId, req.user);
+        res.json(invite);
+    } catch (err) {
+        res.status(400).json({ error: err.message });
+    }
 })
 
 //deleting invite 
 router.delete("/:inviteId", requireAuth, async(req, res) => {
-    
+    try{
+        await inviteService.deleteInvite(req.params.inviteId, req.user);
+        res.json({ message: "Invite deleted successfully" });
+    }catch (err) {
+        res.status(400).json({ error: err.message });
+    }
 })
-
+//my pending
 router.get("/my-invites", requireAuth, async(req, res) => {
-    
+    try{
+        const invites = await inviteService.getMyInvites(req.user);
+        res.json(invites);
+    } catch (err) {
+        res.status(400).json({ error: err.message });
+    }
 })
 
 //might show in user settings, idk this is tough should the members be able to see who is pending (i think so)
 router.get("/pending/:projectId", requireAuth, async(req, res) => {
-
+    try{
+        const invites = await inviteService.getPendingInvites(req.params.projectId, req.user);
+        res.json(invites);
+    } catch (err) {
+        res.status(400).json({ error: err.message });
+    }
 })
 
 

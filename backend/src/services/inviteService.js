@@ -1,6 +1,5 @@
 
 //Utilities
-import { validateEmail } from "../utils/validation.js";
 import { generateShortId } from "../utils/id.js"
 
 /* 
@@ -24,7 +23,7 @@ export class InviteService {
         if(!this.inviteDomain.canInvite(project, user)) throw new Error("Unauthorized");
         
         const invite = await this.inviteDomain.createInvite({
-           projectId,
+           projectId: project.id,
            email,
            token: generateShortId(),
            expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) //7 days: might just make this prisma default we'll see
@@ -54,7 +53,7 @@ export class InviteService {
         if(!invite) throw new Error("Invite not found");
         const project = await this.projectRepo.getByShortId(invite.projectId);
         if(!project) throw new Error("Project not found");
-        // Only owner can delte
+        // Only owner can delete
         if(!this.inviteDomain.canRevokeInvite(invite, project, user)) throw new Error("Unauthorized")
 
         return await this.inviteRepo.deleteInvite(inviteId);

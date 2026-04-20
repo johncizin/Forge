@@ -1,5 +1,5 @@
 // domain/invite.js
-import { validateEmail } from "../utils/validators.js";
+import { validateEmail } from "../utils/validator.js";
 /*
 model PendingInvite {
   id        String       @id @default(uuid())

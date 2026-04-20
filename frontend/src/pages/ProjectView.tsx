@@ -1,14 +1,29 @@
+//react dependencies
 import { useParams } from "react-router-dom";
+import { useState } from "react";
+
+//icon dependencies
+import { Plus, Share, FolderKanban } from "lucide-react";
+
+//hooks
 import { useProject } from "../hooks/projectHook";
 import { useAuth } from "../context/authContext";
-import { Plus} from "lucide-react";
 import { useTasks } from "../hooks/taskHook";
+
+//types
 import type { TaskData } from "../services/taskService";
-import { createTask } from "../services/taskService";
 import type { FetchedTaskData } from "../services/taskService";
-import { useState } from "react";
+
+
+//Service funcs
+import { createTask } from "../services/taskService";
+import { sendInviteByEmail } from "../services/inviteService";
+
+
+//modals
 import { CreateTaskModal } from "../components/modals/TaskModal";
-import { FolderKanban } from "lucide-react";
+import { CreateInviteModal } from "../components/modals/InviteModal";
+
 
 export function Project() {
   //using patterns from taskService and taskHook
@@ -18,8 +33,16 @@ export function Project() {
   const { token, user } = useAuth();
   const { project, loading: projectLoading, error: projectError } = useProject(shortId);
   const { tasks, loading: tasksLoading, error: tasksError, refetch } = useTasks(shortId);
-  const [showModal, setShowModal] = useState(false);
+  const [showTaskModal, setShowTaskModal] = useState(false);
+  const [showInviteModal, setShowInviteModal] = useState(false);
 
+  async function handleInviteCreate(data: { email: string }) {
+    //send invite email, then refetch project to update invite list
+    await sendInviteByEmail(shortId!, data.email, token!);
+    console.log("invite sent, refetching project...");
+    await refetch();
+    console.log("project after refetch:", project);
+  }
 
   async function handleTaskCreate(task: TaskData) {
     await createTask(task, shortId!, token!);
@@ -28,7 +51,7 @@ export function Project() {
     console.log("tasks after refetch:", tasks);
   }
 
-    if (projectLoading || tasksLoading) return <div className="flex items-center justify-center h-full text-forge-muted"><p>Loading...</p></div>;
+  if (projectLoading || tasksLoading) return <div className="flex items-center justify-center h-full text-forge-muted"><p>Loading...</p></div>;
   if (projectError || tasksError) return <div className="flex items-center justify-center h-full text-red-400"><p>{projectError || tasksError}</p></div>;
 
   return (
@@ -40,14 +63,22 @@ export function Project() {
           <p className="text-sm text-forge-muted">{project?.description}</p>
         </div>
         {project?.ownerId === user?.id && (
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setShowTaskModal(true)}
+              className="flex items-center gap-2 bg-forge-accent text-white text-sm font-medium px-4 py-2 rounded-lg hover:opacity-80 transition-opacity"
+            >
+              <Plus size={16} />
+              New Task
+            </button>
           <button
-            onClick={() => setShowModal(true)}
+            onClick={() => setShowInviteModal(true)}
             className="flex items-center gap-2 bg-forge-accent text-white text-sm font-medium px-4 py-2 rounded-lg hover:opacity-80 transition-opacity"
           >
-            <Plus size={16} />
-            New Task
+            <Share size={16} />
+            Invite
           </button>
-          
+          </div>
         )}
       </div>
 
@@ -81,10 +112,16 @@ export function Project() {
         </div>
       )}
 
-      {showModal && (
+      {showTaskModal && (
         <CreateTaskModal
-          onClose={() => setShowModal(false)}
+          onClose={() => setShowTaskModal(false)}
           onCreate={handleTaskCreate}
+        />
+      )}
+      {showInviteModal && (
+        <CreateInviteModal
+          onClose={() => setShowInviteModal(false)}
+          onCreate={handleInviteCreate}
         />
       )}
     </div>

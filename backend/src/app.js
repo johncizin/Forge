@@ -21,7 +21,7 @@ app.use("/projects", membershipRoutes);
 app.use("/auth", authRoutes);
 app.use("/tasks", taskRoutes);
 app.use("/tasks", membershipRoutes);
-app.use("/invite", inviteRoutes);
+app.use("/invites", inviteRoutes);
 //app.use("/membership", membershipRoutes); dont think im gonna do this
 
 export default app; 
