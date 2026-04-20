@@ -3,7 +3,7 @@ import { useAuth} from "../context/authContext";
 import { useNavigate } from "react-router-dom";
 
 export function Settings(){
-    const { logout, user } = useAuth();
+    const { logout, user } = useAuth(); // user coming soon: putting name, email, change password etc
     const navigate = useNavigate();
 
     function handleLogout(){

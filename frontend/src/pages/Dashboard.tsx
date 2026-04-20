@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "../context/authContext";
 import { useNavigate } from "react-router-dom";
-import { Plus, FolderKanban, List, LayoutGrid, Funnel } from "lucide-react"; //funnel coming soon
+import { Plus, FolderKanban, List, LayoutGrid, Funnel } from "lucide-react"; //funnel coming soon probably in abstracted compnent for filtering but will leave here for now so i dont forget
 import { CreateProjectModal } from "../components/modals/ProjectModal";
 import { fetchProjects as fetchProjectsService, createProject } from "../services/projectService";
 
