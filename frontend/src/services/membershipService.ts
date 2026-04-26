@@ -4,7 +4,9 @@ export async function fetchProjectMembers(projectShortId: string, token: string)
         headers: { Authorization: `Bearer ${token}` }
     });
     if (!res.ok) throw new Error("Failed to fetch project members");
-    return res.json();
+    const data = await res.json();
+    console.log("fetchProjectMembers response:", data); //debug
+    return data;
 }
 
 export async function fetchTaskMembers(taskId: string, token: string) {

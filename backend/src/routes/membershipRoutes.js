@@ -10,6 +10,7 @@ const router = express.Router();
 //Project
 router.get("/:projectId/members", requireAuth, async (req, res) => {
     try{
+        console.log("Fetching project members for projectId:", req.params.projectId); //debug
         const members = await membershipService.getProjectMembers(req.params.projectId, req.user);
         res.json(members);
     }catch (err) {

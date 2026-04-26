@@ -6,8 +6,8 @@ import type { TaskData } from "../../services/taskService";
 import { ClipboardList } from "lucide-react";
 import { StatusBadge } from "../StatusBadge";
 
-
-
+import { MemberList } from "../ui/MemberList";
+import { useProjectMembership } from "../../hooks/membershipHook";
 /*
 export interface TaskData {
     title: string; added
@@ -21,20 +21,31 @@ export interface TaskData {
 interface CreateTaskModalProp{
     onClose: () => void, //passed from dashboard
     onCreate: (data: TaskData) => Promise<void>;
+    projectShortId: string; //added project short id so we can fetch project members for the task modal, and add to task on create
+    onInviteClick: () => void; //nav to invite modal if user wants to add member not in project
 }
 
-export function CreateTaskModal({ onClose, onCreate }: CreateTaskModalProp) {
+export function CreateTaskModal({ onClose, onCreate, projectShortId, onInviteClick }: CreateTaskModalProp) {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [loading, setLoading] = useState(false);
   const [status, setStatus] = useState<"TODO" | "IN_PROGRESS" | "COMPLETED">("TODO"); //default to TODO, can change later if we want to set on create
+  const[selectedMembers, setSelectedMembers] = useState<string[]>([]); //for selecting members to add to task on create, will be array of member ids
+
+  const { members } = useProjectMembership(projectShortId); //need to pass project short id from dashboard to fetch members for task modal
+
+  function toggleMember(id: string) {
+    setSelectedMembers((prev) =>
+      prev.includes(id) ? prev.filter((memberId) => memberId !== id) : [...prev, id]
+    );
+  }
 
   //flow for handling submit, makes sure vlaue, looading debounce so it doesnt create 1million times 
   // create project ,  no more debounce, automatically close modal
   async function handleSubmit() {
     if (!title.trim()) return;
     setLoading(true);
-    await onCreate({ title, description, status }); //added status to create, but we can change this later if we want to default to TODO
+    await onCreate({ title, description, status, assignees: selectedMembers }); //added status to create, but we can change this later if we want to default to TODO: add assignees to interface
     setLoading(false);
     onClose();
   }
@@ -84,6 +95,17 @@ export function CreateTaskModal({ onClose, onCreate }: CreateTaskModalProp) {
               onStatusChange={ async (s) => setStatus(s as "TODO" | "IN_PROGRESS" | "COMPLETED")} 
             />
           </div>
+
+           <div className="flex flex-col gap-1.5">
+              <label className="text-xs font-medium text-gray-500 uppercase tracking-wide">Assign</label>
+                <MemberList
+                    members={members}
+                    selectedIds={selectedMembers}
+                    onSelect={toggleMember}
+                    onInviteClick={onInviteClick} //fix soon
+                    selectable
+                />
+      </div>
 
         </div>
 

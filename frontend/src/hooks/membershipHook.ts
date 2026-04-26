@@ -17,6 +17,7 @@ export function useProjectMembership(projectShortId: string | undefined) {
     const [members, setMembers] = useState<MemberData[]>([]); //should never be null but edge case
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
+    //const[taskMembers, setTaskMembers] = useState<MemberData[]>([]); //setup for taks members
 
     useEffect(() => {
         async function loadMembers() {

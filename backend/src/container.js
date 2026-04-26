@@ -48,7 +48,8 @@ export const taskService = new TaskService({
 
 export const membershipService = new MembershipService({
         membershipDomain,
-        membershipRepo
+        membershipRepo,
+        projectRepo
 })
 
 export const inviteService = new InviteService({

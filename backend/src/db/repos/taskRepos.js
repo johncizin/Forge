@@ -30,7 +30,10 @@ export async function createTask(task){
 export async function getTaskByShortId(shortId){
     return prisma.task.findUnique({
         where: {shortId},
-        include: { project: true } // include project for authorization checks in service layer
+        include: { 
+            project: true,
+            assignees: true
+         } // include project for authorization checks in service layer
     })
 }
 

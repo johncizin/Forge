@@ -8,6 +8,7 @@ const router = express.Router();
 //create task
 router.post("/", requireAuth, async (req, res) => {
     try {
+         console.log("create task body:", req.body);
         const task = await taskService.createTask(req.body, req.user);
         console.log("created task:", task);
         res.json(task);

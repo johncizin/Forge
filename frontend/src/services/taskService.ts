@@ -4,6 +4,7 @@ export interface TaskData {
     description: string;
     dueDate?: string; //optional
     status?: string; //defaults to "TO-DO" in db
+    assignees?: string[]; //array of member ids, optional for create but can be added later
 }
 export interface CreatedTaskData extends TaskData {
     projectShortId: string;

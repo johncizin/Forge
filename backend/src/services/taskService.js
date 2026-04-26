@@ -23,7 +23,17 @@ export class TaskService {
             projectId: project.id
         }, user);
 
-        return await this.taskRepo.createTask(task);
+        //add assignees if applicable, but either way itll be just an empty array
+        const created = await this.taskRepo.createTask(task);
+
+        if (data.assignees && data.assignees.length > 0) {
+        await Promise.all(
+            data.assignees.map(userId =>
+                this.membershipRepo.addMemberToTask(created.id, userId)
+            )
+        );
+     }
+        return created;
     }
 
     async getTasksByProjectId(shortId, user) {

@@ -35,7 +35,9 @@ export function updateTask(task, data) {
 //policy enforcement functions for authorization
 export function canEditTask(task, user) {
     // Only the project owner or assignee can edit the task
-    return task.project.ownerId === user.id;
+    //updated for assignee 4/26/26
+    return task.project.ownerId === user.id || 
+           task.assignees?.some(a => a.userId === user.id);
 }
 
 export function canDeleteTask(task, user) {

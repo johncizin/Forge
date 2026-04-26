@@ -60,7 +60,6 @@ export function Project() {
 
   async function handleStatusChange(taskShortId: string, newStatus: string) {
     //optimistic changes first:
-    const prev = tasks.map(t=> t.shortId === taskShortId ? { ...t, status: newStatus } : t);
     refetch();
     try {
         await updateTaskStatus(taskShortId, newStatus, token!);
@@ -180,6 +179,11 @@ export function Project() {
         <CreateTaskModal
           onClose={() => setShowTaskModal(false)}
           onCreate={handleTaskCreate}
+          projectShortId={shortId!} //pass project short id to task modal so it can fetch members for assigning
+          onInviteClick={() => {
+            setShowTaskModal(false);
+            setShowInviteModal(true);
+          }} //close task modal and open invite modal if user wants to invite someone from task modal
         />
       )}
       {showInviteModal && (

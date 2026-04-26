@@ -1,7 +1,8 @@
 export class MembershipService {
-    constructor({ membershipDomain, membershipRepo }){
+    constructor({ membershipDomain, membershipRepo, projectRepo }) {
         this.membershipDomain = membershipDomain;
         this.membershipRepo = membershipRepo;
+        this.projectRepo = projectRepo;
     }
 
     //role hardcoded
@@ -43,7 +44,10 @@ export class MembershipService {
 
 
     async getProjectMembers(projectId, user) {
-        const memberships = await this.membershipRepo.getProjectMembers(projectId);
+        const project = await this.projectRepo.getByShortId(projectId);
+        console.log("Fetched project in getProjectMembers:", project); //debug
+        if (!project) throw new Error("Project not found");
+        const memberships = await this.membershipRepo.getProjectMembers(project.id);
         return memberships.map(m => m.user); // extract user info from memberships
     }
 
