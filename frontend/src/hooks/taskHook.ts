@@ -29,6 +29,6 @@ export function useTasks(shortId: string | undefined) {
     }, [shortId, token]);
 
     console.log("tasks in hook", tasks);
-    return { tasks, loading, error, refetch: loadTasks };
+    return { tasks, loading, error, refetch: loadTasks, setTasks }; //added setTask to auto update status changes
 }
 

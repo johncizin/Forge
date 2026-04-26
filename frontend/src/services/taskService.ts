@@ -40,4 +40,17 @@ export async function createTask(task: TaskData, projectShortId: string, token: 
 
 //update to come
 
+export async function updateTaskStatus(taskShortId: string, newStatus: string, token: string) {
+    const res = await fetch(`http://localhost:3000/tasks/${taskShortId}/status`, {
+        method: "PATCH",
+        headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify({ status: newStatus }),
+    });
+    if (!res.ok) throw new Error("Failed to update task status");
+    return res.json();
+}
+
 //delete

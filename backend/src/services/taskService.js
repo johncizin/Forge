@@ -53,8 +53,19 @@ export class TaskService {
         if (!this.taskDomain.canEditTask(task, user)) {
             throw new Error("Unauthorized");
         }
-        const updatedTask = { ...task, ...data };
-        return await this.taskRepo.updateTask(taskId, updatedTask);
+        //console.log("updating task IN DOMAIN!!", data); working issue in repo
+        const updatedData = this.taskDomain.updateTask(task, data);
+        return await this.taskRepo.updateTask(taskId, updatedData);
+    }
+    
+    async updateTaskStatus(taskId, status, user) {
+        const task = await this.taskRepo.getTaskByShortId(taskId);
+        if (!task) throw new Error("Not found");
+        if (!this.taskDomain.canEditTask(task, user)) {
+            throw new Error("Unauthorized");
+        }
+        //console.log("updating task IN DOMAIN!!", data); working issue in repo
+        return await this.taskRepo.updateTaskStatus(taskId, status);
     }
 
 }

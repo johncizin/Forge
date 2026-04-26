@@ -18,11 +18,16 @@ import type { FetchedTaskData } from "../services/taskService";
 //Service funcs
 import { createTask } from "../services/taskService";
 import { sendInviteByEmail } from "../services/inviteService";
+import { updateTaskStatus } from "../services/taskService";
 
 
 //modals
 import { CreateTaskModal } from "../components/modals/TaskModal";
 import { CreateInviteModal } from "../components/modals/InviteModal";
+
+//components
+import { StatusBadge } from "../components/StatusBadge";
+
 
 
 export function Project() {
@@ -51,6 +56,22 @@ export function Project() {
     console.log("task created, refetching tasks...");
     await refetch();
     console.log("tasks after refetch:", tasks);
+  }
+
+  async function handleStatusChange(taskShortId: string, newStatus: string) {
+    //optimistic changes first:
+    const prev = tasks.map(t=> t.shortId === taskShortId ? { ...t, status: newStatus } : t);
+    refetch();
+    try {
+        await updateTaskStatus(taskShortId, newStatus, token!);
+        console.log("task status updated, refetching tasks...");
+        await refetch();
+        console.log("tasks after refetch:", tasks);
+    } catch (error) {
+        console.error("Failed to update task status:", error);
+        //revert optimistic change if API call fails
+        refetch();
+    }
   }
 
   if (projectLoading || tasksLoading) return <div className="flex items-center justify-center h-full text-forge-muted"><p>Loading...</p></div>;
@@ -118,17 +139,25 @@ export function Project() {
       ) : view === "grid" ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {tasks.map((task: FetchedTaskData) => (
+           // task card view
             <div key={task.shortId} className="border border-forge-border rounded-lg p-4 cursor-pointer hover:bg-forge-login-hover transition-colors">
               <h2 className="text-lg font-semibold text-forge-login-text mb-2">{task.title}</h2>
               <p className="text-sm text-forge-muted mb-4">{task.description}</p>
               <div className="flex items-center justify-between">
                 <span className="text-xs text-forge-muted">Due: {task.dueDate ?? "No due date"}</span>
-                <span className="text-xs text-forge-muted">{task.status ?? "TODO"}</span>
+             <div className="flex items-center justify-between">
+            <span className="text-xs text-forge-muted">Due: {task.dueDate ?? "No due date"}</span>
+            <StatusBadge
+                status={(task.status ?? "TODO") as "TODO" | "IN_PROGRESS" | "COMPLETED"}
+                onStatusChange={(newStatus) => handleStatusChange(task.shortId, newStatus)}
+            />
+          </div>
               </div>
             </div>
           ))}
         </div>
       ) : (
+        //task list view
   <div className="flex flex-col gap-2">
     {tasks.map((task) => (
       <div

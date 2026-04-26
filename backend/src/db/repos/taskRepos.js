@@ -54,6 +54,13 @@ export async function updateTask(shortId, data){
     })
 }
 
+export async function updateTaskStatus(shortId, status){
+    return prisma.task.update({
+        where: {shortId},
+        data: { status }
+    })
+}
+
 export async function getTaskById(id){
     return prisma.task.findUnique({
         where: {id}

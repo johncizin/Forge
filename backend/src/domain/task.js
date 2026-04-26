@@ -2,7 +2,7 @@
 
 */
 
-export function createTask({ title, description, shortId, projectId }, user) {
+export function createTask({ title, description, shortId, projectId, status }, user) {
     console.log("in domain")
     if (!title || !projectId || !user.id || !shortId) {
         throw new Error("Missing required fields");
@@ -13,7 +13,8 @@ export function createTask({ title, description, shortId, projectId }, user) {
         title,
         description: description || "",
         shortId,
-        projectId
+        projectId,
+        status: status || "TODO"
     }
 }
 

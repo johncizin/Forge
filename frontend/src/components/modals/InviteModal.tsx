@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { UserPlus } from "lucide-react";
 
+
 interface InviteData {
     email: string;
 }
@@ -50,7 +51,7 @@ export function CreateInviteModal({ onClose, onCreate }: CreateInviteModalProp) 
                         />
                     </div>
                 </div>
-
+                
                 <div className="flex justify-end gap-2 mt-6">
                     <button onClick={onClose} className="px-4 h-9 rounded-lg border border-gray-200 text-sm font-medium text-gray-500 hover:bg-gray-50">
                         Cancel

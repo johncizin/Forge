@@ -4,6 +4,9 @@ import { useState } from "react";
 import type { TaskData } from "../../services/taskService";
 
 import { ClipboardList } from "lucide-react";
+import { StatusBadge } from "../StatusBadge";
+
+
 
 /*
 export interface TaskData {
@@ -24,13 +27,14 @@ export function CreateTaskModal({ onClose, onCreate }: CreateTaskModalProp) {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [loading, setLoading] = useState(false);
+  const [status, setStatus] = useState<"TODO" | "IN_PROGRESS" | "COMPLETED">("TODO"); //default to TODO, can change later if we want to set on create
 
   //flow for handling submit, makes sure vlaue, looading debounce so it doesnt create 1million times 
   // create project ,  no more debounce, automatically close modal
   async function handleSubmit() {
     if (!title.trim()) return;
     setLoading(true);
-    await onCreate({ title, description });
+    await onCreate({ title, description, status }); //added status to create, but we can change this later if we want to default to TODO
     setLoading(false);
     onClose();
   }
@@ -73,6 +77,14 @@ export function CreateTaskModal({ onClose, onCreate }: CreateTaskModalProp) {
               className="w-full px-3 py-2.5 rounded-lg border border-gray-200 text-sm resize-none focus:outline-none focus:border-black"
             />
           </div>
+
+          <div className="flex flex-col gap-1.5">
+            <label className="text-xs font-medium text-gray-500 uppercase tracking-wide">Status</label>
+            <StatusBadge status={status} 
+              onStatusChange={ async (s) => setStatus(s as "TODO" | "IN_PROGRESS" | "COMPLETED")} 
+            />
+          </div>
+
         </div>
 
         <div className="flex justify-end gap-2 mt-6">
