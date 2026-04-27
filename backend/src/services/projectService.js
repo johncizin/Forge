@@ -59,14 +59,14 @@ export class ProjectService {
         return project;
     }
 
-    async deleteProject(projectId, user) {
-        const project = await this.projectRepo.getById(projectId);
+    async deleteProject(projectShortId, user) {
+        const project = await this.projectRepo.getByShortId(projectShortId);
         if (!project)  throw new Error("Not found");
     
         if (!this.projectDomain.canDeleteProject(project, user)) {
             throw new Error("Unauthorized");
         }
-        return await this.projectRepo.delete(projectId);
+        return await this.projectRepo.deleteById(project.id);
     }
 
     async updateProject(projectId, data, user) {

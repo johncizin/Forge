@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom";
 import { useState, useMemo } from "react";
 
 //icon dependencies
-import { Plus, Share, FolderKanban, LayoutGrid, List, User, Crown, UserCheck} from "lucide-react";
+import { Plus, Share, FolderKanban, LayoutGrid, List, User, UserCheck} from "lucide-react";
 
 //hooks
 import { useProject } from "../hooks/projectHook";
@@ -16,9 +16,8 @@ import type { FetchedTaskData } from "../services/taskService";
 
 
 //Service funcs
-import { createTask } from "../services/taskService";
+import { createTask, updateTaskStatus, deleteTask } from "../services/taskService";
 import { sendInviteByEmail } from "../services/inviteService";
-import { updateTaskStatus } from "../services/taskService";
 
 
 //modals
@@ -27,6 +26,9 @@ import { CreateInviteModal } from "../components/modals/InviteModal";
 
 //components
 import { StatusBadge } from "../components/StatusBadge";
+import { TaskDetailModal } from "../components/modals/TaskDetailsModal";
+import { ContextMenu } from "../components/ui/ContextMenu";
+import { ConfirmModal } from "../components/ui/ConfirmModal";
 
 
 
@@ -37,12 +39,14 @@ export function Project() {
   const { shortId } = useParams();
   const { token, user } = useAuth();
   const { project, loading: projectLoading, error: projectError } = useProject(shortId);
-  const { tasks, loading: tasksLoading, error: tasksError, refetch } = useTasks(shortId);
+  const { tasks, loading: tasksLoading, error: tasksError, refetch, setTasks } = useTasks(shortId);
   const [showTaskModal, setShowTaskModal] = useState(false);
   const [showInviteModal, setShowInviteModal] = useState(false);
   const [view, setView] = useState<"grid" | "list">("grid");
+  const[confirmDelete, setConfirmDelete] = useState<{ type: "task", shortId: string } | null>(null);
   const [taskFilter, setTaskFilter] = useState<"all" | "TODO" | "IN_PROGRESS" | "COMPLETED" | 
    "createdAt" | "dueDate" | "assigned" | "unassigned" >("all");
+  const[selectedTask, setSelectedTask] = useState<FetchedTaskData | null>(null);
 
   async function handleInviteCreate(data: { email: string }) {
     //send invite email, then refetch project to update invite list
@@ -85,17 +89,26 @@ export function Project() {
   }, [tasks, taskFilter, user])
 
   async function handleStatusChange(taskShortId: string, newStatus: string) {
+    //check Auth on frontend - when i click quick enough it changes and reverts which is the correct behavior but i dont like that look:
+    const task = tasks.find(t => t.shortId === taskShortId);
+    const canEdit = project?.ownerId === user?.id || task?.assignees?.some(a => a.userId === user?.id);
+    if (!canEdit) return;
+
     //optimistic changes first:
-    refetch();
+    setTasks(prev => prev.map(t => 
+      t.shortId === taskShortId ? {...t, status: newStatus} : t
+    ));
+    if(selectedTask?.shortId === taskShortId){
+      setSelectedTask(prev => prev ? {...prev, status: newStatus}: null);
+    }
+
     try {
         await updateTaskStatus(taskShortId, newStatus, token!);
-        console.log("task status updated, refetching tasks...");
-        await refetch();
+        //await refetch(); //shouldnt need because it should be correct optimistic ^^
         console.log("tasks after refetch:", tasks);
     } catch (error) {
         console.error("Failed to update task status:", error);
-        //revert optimistic change if API call fails
-        refetch();
+        await refetch(); //revert here
     }
   }
 
@@ -146,14 +159,14 @@ export function Project() {
       </button>
       {/* Will change later - abstracting it out*/}
       <select value={taskFilter} onChange={(e) => setTaskFilter(e.target.value as any)} className="border border-gray-200 rounded-lg px-3 py-2 text-sm hover:bg-gray-50">
-      <option value="all">All Tasks</option>
-      <option value="TODO">Todo</option>
-      <option value="IN_PROGRESS">In Progress</option>
-      <option value="COMPLETED">Completed</option>
-      <option value="assigned">Assigned</option>
-      <option value="unassigned">Unassigned</option>
-      <option value="createdAt">Recently Created</option>
-      <option value="dueDate">Due Date</option>
+          <option value="all">All Tasks</option>
+          <option value="TODO">Todo</option>
+          <option value="IN_PROGRESS">In Progress</option>
+          <option value="COMPLETED">Completed</option>
+          <option value="assigned">Assigned</option>
+          <option value="unassigned">Unassigned</option>
+          <option value="createdAt">Recently Created</option>
+          <option value="dueDate">Due Date</option>
       </select>
       </div>
         </div>
@@ -166,18 +179,26 @@ export function Project() {
           <p className="text-sm mt-1">Create one to get started</p>
         </div>
       ) : view === "grid" ? (
+           //grid dov
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {filteredTasks.map((task: FetchedTaskData) => (
-              // task card view
-              <div key={task.shortId} className=" relative border border-forge-border rounded-lg p-4 cursor-pointer hover:bg-forge-login-hover transition-colors min-h-30 flex flex-col justify-between">
+              // task card div
+              <div key={task.shortId} 
+                  onClick={() => setSelectedTask(task)}
+                  className=" relative border border-forge-border rounded-lg p-4 cursor-pointer hover:bg-forge-login-hover transition-colors min-h-30 flex flex-col justify-between">
+                
               {/* owner / member indicator */}
                 <div className="absolute top-3 right-3 flex items-center gap-1">
-                  {project?.ownerId === user?.id && (
-                    <Crown size={12} className="text-forge-muted" />
-              )}
-              {task.assignees?.some(a => a.userId === user?.id) && (
-                   <UserCheck size={12} className="text-forge-muted" />
-              )}
+              {project?.ownerId === user?.id ? (
+                    <div className="flex items-center gap-1">
+                        <ContextMenu options={[
+                          { label: "Edit", onClick: () => console.log("edit task:", task.shortId) },
+                          { label: "Delete", onClick: () => setConfirmDelete({ type: "task", shortId: task.shortId}) , destructive: true }
+                        ]} />
+                    </div>
+                ) : task.assignees?.some(a => a.userId === user?.id) ? (
+                    <UserCheck size={12} className="text-forge-muted" />
+                ) : null}
               </div>
             <div className="pr-6"> 
                 <h2 className="text-sm font-semibold text-forge-login-text mb-1">{task.title}</h2>
@@ -196,10 +217,12 @@ export function Project() {
                           <User size={12} />
                           <span className="text-xs">{(task.assignees?.length ?? 0) + 1}</span>
                       </div>
-                      <StatusBadge
-                          status={(task.status ?? "TODO") as "TODO" | "IN_PROGRESS" | "COMPLETED"}
-                          onStatusChange={(newStatus) => handleStatusChange(task.shortId, newStatus)}
-                      />
+                        <div onClick={(e) => e.stopPropagation()}>
+                        <StatusBadge
+                            status={(task.status ?? "TODO") as "TODO" | "IN_PROGRESS" | "COMPLETED"}
+                            onStatusChange={(newStatus) => handleStatusChange(task.shortId, newStatus)}
+                        />
+                        </div>
                   </div>
               </div>
           </div>
@@ -242,6 +265,29 @@ export function Project() {
           onCreate={handleInviteCreate}
         />
       )}
+
+      {selectedTask && (
+      <TaskDetailModal
+          task={selectedTask}
+          projectOwnerId={project?.ownerId ?? ""}
+          onClose={() => setSelectedTask(null)}
+          onStatusChange={handleStatusChange}
+          onEdit={() => console.log("editing task: ", selectedTask.shortId)}
+      />
+    )}
+
+    {confirmDelete && (
+      <ConfirmModal
+          title="Delete task"
+          message="Are you sure? This cannot be undone."
+          onConfirm={async () => {
+              await deleteTask(confirmDelete.shortId, token!);
+              await refetch();
+              setConfirmDelete(null);
+          }}
+          onClose={() => setConfirmDelete(null)}
+      />
+    )}
     </div>
   );
 }

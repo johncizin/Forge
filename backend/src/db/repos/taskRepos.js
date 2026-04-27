@@ -43,7 +43,11 @@ export async function getTasksByProjectId(projectId){
         where: {projectId},
         include: {     
             project: true, 
-            assignees: true,
+            assignees: {
+                include:{
+                    user : {select : {id: true, name: true, email: true}}
+                }
+            },
             _count: {
                 select: {
                     assignees: true

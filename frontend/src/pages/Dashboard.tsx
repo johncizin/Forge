@@ -11,8 +11,10 @@ import { Plus, FolderKanban, List, LayoutGrid, User, CheckSquare, Crown, UserChe
 //components
 import { CreateProjectModal } from "../components/modals/ProjectModal";
 import { ContextMenu } from "../components/ui/ContextMenu";
+import { ConfirmModal } from "../components/ui/ConfirmModal";
+
 //services
-import { fetchProjects as fetchProjectsService, createProject } from "../services/projectService";
+import { fetchProjects as fetchProjectsService, createProject, deleteProject } from "../services/projectService";
 
 //type alias
 //from backend / db 
@@ -41,6 +43,7 @@ export function Dashboard() {
   const [error, setError] = useState("");
   const [showModal, setShowModal] = useState(false);
   const [view, setView] = useState<"grid" | "list">("grid");
+  const[confirmDelete, setConfirmDelete] = useState<{ type: "project", shortId: string } | null>(null);
   const [filter, setFilter] = useState<"all" | "owned" | "member" | "createdAt" | "alphabetical">("all");
   //right now filtered isn't persistant in the session when you navigate back, just how useState works internally
   //can use sessionStorage which is persistant, im sure yet
@@ -150,7 +153,7 @@ export function Dashboard() {
           {project.ownerId === user?.id ? (
             <ContextMenu options={[
               { label: "Edit", onClick: () => console.log("edit:", project.shortId) },
-              { label: "Delete", onClick: () => console.log("delete:", project.shortId), destructive: true },
+              { label: "Delete", onClick: () => setConfirmDelete({ type: "project", shortId: project.shortId}) , destructive: true },
               { label: "Favorite", onClick: () => console.log("favorite:", project.shortId) }
              ]} />
             ) : (
@@ -206,13 +209,25 @@ export function Dashboard() {
     ))}
   </div>
 )}
-{showModal && (
-  <CreateProjectModal 
-    onClose = {() => setShowModal(false)}
-    onCreate = {handleProjectCreate}
-  />
+      {showModal && (
+        <CreateProjectModal 
+          onClose = {() => setShowModal(false)}
+          onCreate = {handleProjectCreate}
+        />
 
-)}
+      )}
+      {confirmDelete && (
+          <ConfirmModal
+              title="Delete project"
+              message="Are you sure? This cannot be undone."
+              onConfirm={async () => {
+                  await deleteProject(confirmDelete.shortId, token!);
+                  await fetchProjects();
+                  setConfirmDelete(null);
+              }}
+              onClose={() => setConfirmDelete(null)}
+          />
+      )}
     </div>
   );
 }

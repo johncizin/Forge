@@ -14,7 +14,7 @@ export interface CreatedTaskData extends TaskData {
 export interface FetchedTaskData extends Omit<TaskData, "assignees"> {
     shortId: string;
     projectShortId: string;
-    assignees: {userId: string}[];
+    assignees: {userId: string; user?: {id: string; name: string; email: string}}[];
     createdAt: string;
     _count?: {
         assignees: number; //need in repo :: ADDED 
@@ -61,3 +61,11 @@ export async function updateTaskStatus(taskShortId: string, newStatus: string, t
 }
 
 //delete
+export async function deleteTask(shortId: string, token: string){
+    const res = await fetch(`http://localhost:3000/tasks/${shortId}`, {
+        method: "DELETE",
+        headers: { Authorization: `Bearer ${token}` }
+    });
+    if(!res.ok) throw new Error("Failed to delete task")
+    return res.json();
+}
