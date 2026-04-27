@@ -1,12 +1,21 @@
 //task modal pretty much copy of project just different fields
 
+//react dependcies
 import { useState } from "react";
+//types
 import type { TaskData } from "../../services/taskService";
 
+//icons 
 import { ClipboardList } from "lucide-react";
+// abstracted imports
 import { StatusBadge } from "../StatusBadge";
-
 import { MemberList } from "../ui/MemberList";
+
+//calendar widget:
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+
+//hooks
 import { useProjectMembership } from "../../hooks/membershipHook";
 /*
 export interface TaskData {
@@ -31,6 +40,7 @@ export function CreateTaskModal({ onClose, onCreate, projectShortId, onInviteCli
   const [loading, setLoading] = useState(false);
   const [status, setStatus] = useState<"TODO" | "IN_PROGRESS" | "COMPLETED">("TODO"); //default to TODO, can change later if we want to set on create
   const[selectedMembers, setSelectedMembers] = useState<string[]>([]); //for selecting members to add to task on create, will be array of member ids
+  const[dueDate, setDueDate] = useState<Date | null>(null);
 
   const { members } = useProjectMembership(projectShortId); //need to pass project short id from dashboard to fetch members for task modal
 
@@ -45,7 +55,13 @@ export function CreateTaskModal({ onClose, onCreate, projectShortId, onInviteCli
   async function handleSubmit() {
     if (!title.trim()) return;
     setLoading(true);
-    await onCreate({ title, description, status, assignees: selectedMembers }); //added status to create, but we can change this later if we want to default to TODO: add assignees to interface
+    await onCreate({
+       title, 
+       description, 
+       status,
+       assignees: selectedMembers,
+       dueDate: dueDate ? dueDate.toISOString() : undefined
+    }); //added status to create, but we can change this later if we want to default to TODO: add assignees to interface
     setLoading(false);
     onClose();
   }
@@ -88,7 +104,7 @@ export function CreateTaskModal({ onClose, onCreate, projectShortId, onInviteCli
               className="w-full px-3 py-2.5 rounded-lg border border-gray-200 text-sm resize-none focus:outline-none focus:border-black"
             />
           </div>
-
+        {/* status field*/}
           <div className="flex flex-col gap-1.5">
             <label className="text-xs font-medium text-gray-500 uppercase tracking-wide">Status</label>
             <StatusBadge status={status} 
@@ -96,6 +112,21 @@ export function CreateTaskModal({ onClose, onCreate, projectShortId, onInviteCli
             />
           </div>
 
+          <div className="flex flex-col gap-1.5">
+            <label className="text-xs font-medium text-gray-500 uppercase tracking-wide">Due Date</label>
+            <DatePicker 
+              selected={dueDate}
+              onChange={(date: Date | null) => setDueDate(date)}
+              placeholderText="Select a due date"
+              popperPlacement="bottom-start"
+              dateFormat="MM/dd/yyyy"
+              /* no min date for now */
+              className="w-full h-9 px-3 rounded-lg border border-gray-200 text-sm focus:outline-none focus:border-black"
+              />
+          </div>
+
+
+          {/* invite field -- need to clean up empty state */}
            <div className="flex flex-col gap-1.5">
               <label className="text-xs font-medium text-gray-500 uppercase tracking-wide">Assign</label>
                 <MemberList

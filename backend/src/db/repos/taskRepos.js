@@ -37,10 +37,19 @@ export async function getTaskByShortId(shortId){
     })
 }
 
+//adding counting
 export async function getTasksByProjectId(projectId){
     return prisma.task.findMany({
         where: {projectId},
-        include: { project: true } // include project for authorization checks in service layer
+        include: {     
+            project: true, 
+            assignees: true,
+            _count: {
+                select: {
+                    assignees: true
+                }
+            }
+        }
     })
 }
 

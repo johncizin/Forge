@@ -39,6 +39,7 @@ export async function getByShortId(shortId){
     })
 }
 
+//big changes for counting and membership numbers on dashboard
 export async function getProjectsForUser(userId) {
     return prisma.project.findMany({
         where: {
@@ -47,7 +48,15 @@ export async function getProjectsForUser(userId) {
                 { memberships: { some: { userId } } }
             ]
         },
-        orderBy: { createdAt: "desc" }
+        orderBy: { createdAt: "desc" },
+        include: {
+            _count:{
+                select:{
+                    tasks: true,
+                    memberships: true
+                }
+            }
+        }
     });
 }
 

@@ -11,3 +11,14 @@
 ## After done: 
 **MVP**
 --- 
+
+
+# Today: 4/26/26
+## Need: 
+1. Sorting (Project - DONE, TASK - To Come)
+2. Project Updating (TODO)
+3. Task Updating (TODO)
+4. Get List view current to card view changes (TODO - later )
+5. Comments (Want done tomorrow)
+6. Favorites (want done tomorrow)
+7. Toast Notifications (want them to pop up hardcoded- next week)

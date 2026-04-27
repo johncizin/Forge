@@ -1,9 +1,9 @@
 //react dependencies
 import { useParams } from "react-router-dom";
-import { useState } from "react";
+import { useState, useMemo } from "react";
 
 //icon dependencies
-import { Plus, Share, FolderKanban, LayoutGrid, List} from "lucide-react";
+import { Plus, Share, FolderKanban, LayoutGrid, List, User, Crown, UserCheck} from "lucide-react";
 
 //hooks
 import { useProject } from "../hooks/projectHook";
@@ -41,7 +41,8 @@ export function Project() {
   const [showTaskModal, setShowTaskModal] = useState(false);
   const [showInviteModal, setShowInviteModal] = useState(false);
   const [view, setView] = useState<"grid" | "list">("grid");
-  const [filter, setFilter] = useState<"all" | "Assigned" | "createdAt" | "alphabetical">("all");
+  const [taskFilter, setTaskFilter] = useState<"all" | "TODO" | "IN_PROGRESS" | "COMPLETED" | 
+   "createdAt" | "dueDate" | "assigned" | "unassigned" >("all");
 
   async function handleInviteCreate(data: { email: string }) {
     //send invite email, then refetch project to update invite list
@@ -57,6 +58,30 @@ export function Project() {
     await refetch();
     console.log("tasks after refetch:", tasks);
   }
+
+  const filteredTasks = useMemo(() =>{
+    let result = [...tasks];
+
+     if (taskFilter === "TODO") {
+        result = result.filter(t => t.status === "TODO");
+    } else if (taskFilter === "IN_PROGRESS") {
+        result = result.filter(t => t.status === "IN_PROGRESS");
+    } else if (taskFilter === "COMPLETED") {
+        result = result.filter(t => t.status === "COMPLETED");
+    } else if (taskFilter === "assigned") {
+        result = result.filter(t => t.assignees?.some(a => a.userId === user?.id));
+    } else if (taskFilter === "unassigned") {
+        result = result.filter(t => !t.assignees?.length);
+    } else if (taskFilter === "createdAt") {
+        result.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+    } else if (taskFilter === "dueDate") {
+        result = result
+            .filter(t => t.dueDate)
+            .sort((a, b) => new Date(a.dueDate!).getTime() - new Date(b.dueDate!).getTime());
+    }
+
+    return result;
+  }, [tasks, taskFilter, user])
 
   async function handleStatusChange(taskShortId: string, newStatus: string) {
     //optimistic changes first:
@@ -119,11 +144,15 @@ export function Project() {
       {view === "grid" ? <List size={16} /> : <LayoutGrid size={16} />}
       </button>
       {/* Will change later - abstracting it out*/}
-      <select value={filter} onChange={(e) => setFilter(e.target.value as any)} className="border border-gray-200 rounded-lg px-3 py-2 text-sm hover:bg-gray-50">
+      <select value={taskFilter} onChange={(e) => setTaskFilter(e.target.value as any)} className="border border-gray-200 rounded-lg px-3 py-2 text-sm hover:bg-gray-50">
       <option value="all">All Tasks</option>
-      <option value="member">Assigned</option>
-      <option value="createdBy">Created Date</option>
-      <option value="alphabetical">Alphabetical</option>
+      <option value="TODO">Todo</option>
+      <option value="IN_PROGRESS">In Progress</option>
+      <option value="COMPLETED">Completed</option>
+      <option value="assigned">Assigned</option>
+      <option value="unassigned">Unassigned</option>
+      <option value="createdAt">Recently Created</option>
+      <option value="dueDate">Due Date</option>
       </select>
       </div>
         </div>
@@ -136,29 +165,49 @@ export function Project() {
           <p className="text-sm mt-1">Create one to get started</p>
         </div>
       ) : view === "grid" ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {tasks.map((task: FetchedTaskData) => (
-           // task card view
-            <div key={task.shortId} className="border border-forge-border rounded-lg p-4 cursor-pointer hover:bg-forge-login-hover transition-colors">
-              <h2 className="text-lg font-semibold text-forge-login-text mb-2">{task.title}</h2>
-              <p className="text-sm text-forge-muted mb-4">{task.description}</p>
-              <div className="flex items-center justify-between">
-                <span className="text-xs text-forge-muted">Due: {task.dueDate ?? "No due date"}</span>
-             <div className="flex items-center justify-between">
-            <span className="text-xs text-forge-muted">Due: {task.dueDate ?? "No due date"}</span>
-            <StatusBadge
-                status={(task.status ?? "TODO") as "TODO" | "IN_PROGRESS" | "COMPLETED"}
-                onStatusChange={(newStatus) => handleStatusChange(task.shortId, newStatus)}
-            />
-          </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {filteredTasks.map((task: FetchedTaskData) => (
+              // task card view
+              <div key={task.shortId} className=" relative border border-forge-border rounded-lg p-4 cursor-pointer hover:bg-forge-login-hover transition-colors min-h-30 flex flex-col justify-between">
+              {/* owner / member indicator */}
+                <div className="absolute top-3 right-3 flex items-center gap-1">
+                  {project?.ownerId === user?.id && (
+                    <Crown size={12} className="text-forge-muted" />
+              )}
+              {task.assignees?.some(a => a.userId === user?.id) && (
+                   <UserCheck size={12} className="text-forge-muted" />
+              )}
               </div>
+            <div className="pr-6"> 
+                <h2 className="text-sm font-semibold text-forge-login-text mb-1">{task.title}</h2>
+                {task.description && (
+                    <p className="text-xs text-forge-muted line-clamp-2">{task.description}</p>
+                )}
             </div>
+             <div className="flex items-center justify-between mt-3">
+                  <span className="text-xs text-forge-muted">
+                      Due: {task.dueDate 
+                          ? new Date(task.dueDate).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }) 
+                          : "No due date"}
+                  </span>
+                  <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-1 text-forge-muted">
+                          <User size={12} />
+                          <span className="text-xs">{(task.assignees?.length ?? 0) + 1}</span>
+                      </div>
+                      <StatusBadge
+                          status={(task.status ?? "TODO") as "TODO" | "IN_PROGRESS" | "COMPLETED"}
+                          onStatusChange={(newStatus) => handleStatusChange(task.shortId, newStatus)}
+                      />
+                  </div>
+              </div>
+          </div>
           ))}
         </div>
       ) : (
         //task list view
   <div className="flex flex-col gap-2">
-    {tasks.map((task) => (
+    {filteredTasks.map((task) => (
       <div
         key={task.shortId}
         className="flex items-center gap-4 border border-forge-border rounded-xl px-5 py-3 cursor-pointer hover:bg-forge-login-hover transition-colors"

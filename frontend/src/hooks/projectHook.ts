@@ -9,6 +9,11 @@ export interface ProjectData {
     ownerId: string;
     description: string;
     shortId: string;
+    createdAt: string;
+    _count: {
+        tasks: number
+        membership: number;
+    }
 }
 
 export function useProject(shortId: string | undefined) {

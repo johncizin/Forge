@@ -105,3 +105,6 @@ curl -X POST http://localhost:3000/auth/register \
 * Invite service calls into MembershipService on acceptance — one-way dependency, invite knows about membership, membership does not know about invites
 * `isProjectMember` and `isTaskAssignee` live in membershipRepo and are imported directly by projectService and taskService for authorization gates
 * No separate util file — repo functions serve that purpose
+
+# TODO (4/26/26)
+1. Add owner membership table 

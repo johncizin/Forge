@@ -22,8 +22,6 @@ export class ProjectService {
             user: { id, name, ... } // from auth context
     */ 
     async createProject(data, user) {
-        console.log("Creating project with data:", data, "for user:", user); // print debug
-        
         const project = await this.projectDomain.createProject({
             ...data,
             shortId: generateShortId(),

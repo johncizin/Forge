@@ -1,5 +1,7 @@
 //making this because im duplicating a lot of fetching logic
 
+
+
 //dashboard view fetch
 export async function fetchProjects(token: string) {
     const res = await fetch("http://localhost:3000/projects/my-projects", {
@@ -31,6 +33,7 @@ export async function fetchProjectByShortId(shortId: string, token: string) {
     if (!res.ok) throw new Error("Failed to fetch project");
     return res.json();
 }
+
 
 //update
 //delete

@@ -4,15 +4,21 @@ export interface TaskData {
     description: string;
     dueDate?: string; //optional
     status?: string; //defaults to "TO-DO" in db
-    assignees?: string[]; //array of member ids, optional for create but can be added later
+    assignees?: string[]
 }
 export interface CreatedTaskData extends TaskData {
     projectShortId: string;
 }
-
-export interface FetchedTaskData extends TaskData {
+    
+//overriding was breaking modal: found this really cool omit utility 
+export interface FetchedTaskData extends Omit<TaskData, "assignees"> {
     shortId: string;
     projectShortId: string;
+    assignees: {userId: string}[];
+    createdAt: string;
+    _count?: {
+        assignees: number; //need in repo :: ADDED 
+    }
 }
 
 export async function fetchTasksFromProjectShortId(shortId: string, token: string) {
@@ -39,7 +45,7 @@ export async function createTask(task: TaskData, projectShortId: string, token: 
     return res.json();
 }
 
-//update to come
+//update to come :: the time has come fr
 
 export async function updateTaskStatus(taskShortId: string, newStatus: string, token: string) {
     const res = await fetch(`http://localhost:3000/tasks/${taskShortId}/status`, {
