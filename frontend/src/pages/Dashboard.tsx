@@ -6,10 +6,11 @@ import { useNavigate } from "react-router-dom";
 
 
 //lucide icons
-import { Plus, FolderKanban, List, LayoutGrid, User, CheckSquare, Crown } from "lucide-react";
+import { Plus, FolderKanban, List, LayoutGrid, User, CheckSquare, Crown, UserCheck } from "lucide-react";
 
 //components
 import { CreateProjectModal } from "../components/modals/ProjectModal";
+import { ContextMenu } from "../components/ui/ContextMenu";
 //services
 import { fetchProjects as fetchProjectsService, createProject } from "../services/projectService";
 
@@ -137,11 +138,26 @@ export function Dashboard() {
         onClick={() => navigate(`/projects/${project.shortId}`)}
         className="relative border border-forge-border rounded-2xl p-5 cursor-pointer hover:bg-forge-login-hover transition-colors min-h-35 flex flex-col justify-between"
       >
-        {/* crown indicates you are owner */}
-        <div className="absolute top-3 right-3">
-          {project.ownerId === user?.id && (
+        {/* crown indicates you are owner  or member*/}
+        <div className="absolute top-3 right-3 flex items-center gap-1">
+          {project.ownerId === user?.id ? (
             <Crown size={12} className="text-forge-muted" />
+            
+          ) : (
+            <UserCheck size={12} className="text-forge-muted"/>
           )}
+          {/* ternary for context menu specifics */}
+          {project.ownerId === user?.id ? (
+            <ContextMenu options={[
+              { label: "Edit", onClick: () => console.log("edit:", project.shortId) },
+              { label: "Delete", onClick: () => console.log("delete:", project.shortId), destructive: true },
+              { label: "Favorite", onClick: () => console.log("favorite:", project.shortId) }
+             ]} />
+            ) : (
+              <ContextMenu options={[
+                {label: "Favorite", onClick: () => console.log("favorite:", project.shortId) }
+              ]} />
+            )} 
         </div>
 
       <div className="pr-6">

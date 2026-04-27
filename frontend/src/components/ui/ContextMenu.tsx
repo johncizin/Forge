@@ -29,6 +29,41 @@ export function ContextMenu({ options }:  ContextMenuProps){
                 setOpen(false);
             }
         }
-    })
+        //when clicked outside
+        document.addEventListener("mousedown", handleClickOutside);
+        //disconnect event- each time would have a new event and then its a memory leak and not necessary to always be listening when menu isnt open
+        return () => document.removeEventListener("mousedown", handleClickOutside);
+
+    },[])
+
+       return (
+        <div ref={ref} className="relative" onClick={(e) => e.stopPropagation()}>
+            <button
+                onClick={() => setOpen(!open)}
+                className="p-1 rounded-md text-forge-muted hover:text-forge-login-text hover:bg-gray-100 transition-colors"
+            >
+                <EllipsisVertical size={14} />
+            </button>
+
+            {open && (
+                <div className="absolute right-0 top-6 z-20 bg-white border border-gray-200 rounded-xl shadow-md overflow-hidden min-w-30">
+                    {options.map((option) => (
+                        <button
+                            key={option.label}
+                            onClick={() => {
+                                option.onClick();
+                                setOpen(false);
+                            }}
+                            className={`w-full text-left px-4 py-2 text-xs font-medium transition-colors hover:bg-gray-50 ${
+                                option.destructive ? "text-red-500" : "text-forge-login-text"
+                            }`}
+                        >
+                            {option.label}
+                        </button>
+                    ))}
+                </div>
+            )}
+        </div>
+    );
 
 }
