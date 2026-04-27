@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 
 
 //lucide icons
-import { Plus, FolderKanban, List, LayoutGrid, User, CheckSquare } from "lucide-react";
+import { Plus, FolderKanban, List, LayoutGrid, User, CheckSquare, Crown } from "lucide-react";
 
 //components
 import { CreateProjectModal } from "../components/modals/ProjectModal";
@@ -113,7 +113,6 @@ export function Dashboard() {
   <button onClick={() => setView(view === "grid" ? "list" : "grid")} className="p-2 rounded-lg border border-gray-200 hover:bg-gray-50">
     {view === "grid" ? <List size={16} /> : <LayoutGrid size={16} />}
   </button>
-  {/* Will change later - abstracting it out*/}
   <select value={filter} onChange={(e) => setFilter(e.target.value as any)} className="border border-gray-200 rounded-lg px-3 py-2 text-sm hover:bg-gray-50">
     <option value="all">All Projects</option>
     <option value="owned">Owned Projects</option>
@@ -136,9 +135,16 @@ export function Dashboard() {
       <div
         key={project.shortId}
         onClick={() => navigate(`/projects/${project.shortId}`)}
-        className="border border-forge-border rounded-2xl p-5 cursor-pointer hover:bg-forge-login-hover transition-colors min-h-35 flex flex-col justify-between"
+        className="relative border border-forge-border rounded-2xl p-5 cursor-pointer hover:bg-forge-login-hover transition-colors min-h-35 flex flex-col justify-between"
       >
-      <div>
+        {/* crown indicates you are owner */}
+        <div className="absolute top-3 right-3">
+          {project.ownerId === user?.id && (
+            <Crown size={12} className="text-forge-muted" />
+          )}
+        </div>
+
+      <div className="pr-6">
         <div className="flex items-center gap-3 mb-3">
           <div className="w-8 h-8 rounded-lg bg-forge-accent flex items-center justify-center shrink-0">
             <FolderKanban size={16} color="white" />

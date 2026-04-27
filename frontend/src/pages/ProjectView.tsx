@@ -75,6 +75,7 @@ export function Project() {
     } else if (taskFilter === "createdAt") {
         result.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
     } else if (taskFilter === "dueDate") {
+      //filter out tasks with no dueDate then sort the results
         result = result
             .filter(t => t.dueDate)
             .sort((a, b) => new Date(a.dueDate!).getTime() - new Date(b.dueDate!).getTime());

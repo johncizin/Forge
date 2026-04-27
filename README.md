@@ -15,9 +15,10 @@
 
 # Today: 4/26/26
 ## Need: 
-1. Sorting (Project - DONE, TASK - To Come)
-2. Project Updating (TODO)
-3. Task Updating (TODO)
+1. Sorting (Project - DONE, TASK - To Come)  :: (DONE)
+2. Project Updating and Deleting (TODO)
+3. Task Updating and Deleting (TODO)
+    * these both include removing members
 4. Get List view current to card view changes (TODO - later )
 5. Comments (Want done tomorrow)
 6. Favorites (want done tomorrow)

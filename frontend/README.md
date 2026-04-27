@@ -35,3 +35,6 @@
 # Filtering:
 * Going to abstract it out because and inject dependencies. 
 * Same component for project and task. Different endpoints and different filter presets
+
+# Task View: 
+<img src="../mockupImages/TaskViewMockup.png.png" alt="taskView mockup">
